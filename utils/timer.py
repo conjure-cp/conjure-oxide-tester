@@ -7,6 +7,7 @@ import sys
 import json
 import time
 import subprocess
+from filelock import FileLock
 
 with Path("settings.json").open("r", encoding="utf-8") as f:
     settings = json.load(f)
@@ -14,20 +15,22 @@ with Path("settings.json").open("r", encoding="utf-8") as f:
 runner_commands = dict(settings["runner_commands"])
 csvpath = settings["outfile"]
 
-# def update_by_run(df, essence_model, runner, new_value):
-#     # df.loc[df["models"] == essence_model, runner] = str(new_value)
-#     df.loc[df["models"] == essence_model, runner] = new_value
+global_lock = FileLock(csvpath + ".lock")
 
-# def find_essence_files(directory: str) -> List[str]:
-#     base = Path(directory)
-#     if not base.is_dir():
-#         raise ValueError(f"{directory} is not a directory")
+def update_by_run(df, essence_model, runner, new_value):
+    # df.loc[df["models"] == essence_model, runner] = str(new_value)
+    df.loc[df["models"] == essence_model, runner] = new_value
 
-#     return [
-#         str(path.relative_to(base))
-#         for path in base.rglob("*")
-#         if path.is_file() and path.suffix in {".essence", ".eprime"}
-#     ]
+def find_essence_files(directory: str) -> List[str]:
+    base = Path(directory)
+    if not base.is_dir():
+        raise ValueError(f"{directory} is not a directory")
+
+    return [
+        str(path.relative_to(base))
+        for path in base.rglob("*")
+        if path.is_file() and path.suffix in {".essence", ".eprime"}
+    ]
 
 
 def time_oxide_run(df, runner, essence_model):
@@ -51,6 +54,7 @@ def time_oxide_run(df, runner, essence_model):
 
     if (result.returncode == 0):
         print("runtime:",runtime)
+        print(f"{essence_model}, {runner}, {runtime}")
         update_by_run(df, essence_model, runner, runtime)
     else:
         print("fail runtime:",runtime)
@@ -58,8 +62,7 @@ def time_oxide_run(df, runner, essence_model):
 
 models = find_essence_files(".");
 
-df = pd.read_csv(settings["outfile"], index_col=False)
-
-time_oxide_run(df, sys.argv[1], sys.argv[2]) 
-
-df.to_csv(csvpath, index=False)
+with global_lock:
+    df = pd.read_csv(settings["outfile"], index_col=False)
+    time_oxide_run(df, sys.argv[1], sys.argv[2]) 
+    df.to_csv(csvpath, index=False)
