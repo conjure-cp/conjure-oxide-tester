@@ -5,3 +5,5 @@ runners/
 __pycache__/
 notes
 test-script
+*log*
+*.log
