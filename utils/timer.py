@@ -1,44 +1,51 @@
-from utils import *
+# timer.py
 
 from pathlib import Path
-from typing import List
-import pandas as pd
+import sqlite3
 import sys
 import json
 import time
 import subprocess
-from filelock import FileLock
 
+# ------------------------
+# Load settings
+# ------------------------
 with Path("settings.json").open("r", encoding="utf-8") as f:
     settings = json.load(f)
 
-runner_commands = dict(settings["runner_commands"])
-csvpath = settings["outfile"]
-
-global_lock = FileLock(csvpath + ".lock")
-
-def update_by_run(df, essence_model, runner, new_value):
-    # df.loc[df["models"] == essence_model, runner] = str(new_value)
-    df.loc[df["models"] == essence_model, runner] = new_value
-
-def find_essence_files(directory: str) -> List[str]:
-    base = Path(directory)
-    if not base.is_dir():
-        raise ValueError(f"{directory} is not a directory")
-
-    return [
-        str(path.relative_to(base))
-        for path in base.rglob("*")
-        if path.is_file() and path.suffix in {".essence", ".eprime"}
-    ]
+runner_commands = settings["runner_commands"]
+db_path = settings["outfile"]
 
 
-def time_oxide_run(df, runner, essence_model):
+def get_connection():
+    conn = sqlite3.connect(db_path, timeout=30)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    return conn
+
+
+def update_runtime(conn, model, runner, runtime):
+    # Ensure row exists
+    conn.execute("""
+        INSERT INTO results (model)
+        VALUES (?)
+        ON CONFLICT(model) DO NOTHING
+    """, (model,))
+
+    # Update specific runner column
+    query = f'UPDATE results SET "{runner}" = ? WHERE model = ?'
+    conn.execute(query, (runtime, model))
+
+    conn.commit()
+
+
+def time_run(runner, model):
+    if runner not in runner_commands:
+        raise ValueError(f"Unknown runner: {runner}")
+
     start = time.perf_counter()
-    # run commands
-    cmd = f"{runner_commands[runner]} ./{essence_model}"
 
-    print(cmd)
+    cmd = f"{runner_commands[runner]} ./{model}"
+    print("Running:", cmd)
 
     result = subprocess.run(
         cmd,
@@ -46,23 +53,27 @@ def time_oxide_run(df, runner, essence_model):
         text=True,
     )
 
-    end = time.perf_counter()
+    runtime = time.perf_counter() - start
 
-    runtime = end - start
-
-    print(result.returncode)
-
-    if (result.returncode == 0):
-        print("runtime:",runtime)
-        print(f"{essence_model}, {runner}, {runtime}")
-        update_by_run(df, essence_model, runner, runtime)
+    if result.returncode == 0:
+        print("Runtime:", runtime)
     else:
-        print("fail runtime:",runtime)
-        update_by_run(df, essence_model, runner, -1.0)
+        print("Run failed. Recording -1.0")
+        runtime = -1.0
 
-models = find_essence_files(".");
+    return runtime
 
-with global_lock:
-    df = pd.read_csv(settings["outfile"], index_col=False)
-    time_oxide_run(df, sys.argv[1], sys.argv[2]) 
-    df.to_csv(csvpath, index=False)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python timer.py <runner> <model>")
+        sys.exit(1)
+
+    runner = sys.argv[1]
+    # model = Path(sys.argv[2]).name  # normalize name
+    model = str(Path(sys.argv[2]))
+
+    conn = get_connection()
+    runtime = time_run(runner, model)
+    update_runtime(conn, model, runner, runtime)
+    conn.close()

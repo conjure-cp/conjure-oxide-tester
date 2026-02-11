@@ -3,5 +3,5 @@
     "oxide_main_minion": "./runners/conjure-oxide-main solve",
     "oxide_main_sat": "./runners/conjure-oxide-main solve -s sat"
   },
-  "outfile": "/home/shikhar/Documents/VIP/goofballery/bash-test/outpath.csv"
+  "outfile": "/home/shikhar/Documents/VIP/goofballery/bash-test/out.db"
 }

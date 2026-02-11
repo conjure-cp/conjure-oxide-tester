@@ -1,31 +1,40 @@
-from utils import *
-# import json
+# setup.py
 
+from pathlib import Path
+import sqlite3
+import json
+
+# ------------------------
+# Load settings
+# ------------------------
 with Path("settings.json").open("r", encoding="utf-8") as f:
     settings = json.load(f)
 
-runner_commands = dict(settings["runner_commands"])
-print(runner_commands)
+db_path = settings["outfile"]
+runner_names = list(settings["runner_commands"].keys())
 
 
-def form_df():
+def recreate_database():
+    conn = sqlite3.connect(db_path)
+    conn.execute("PRAGMA journal_mode=WAL;")
 
-    # Initial data
-    essences = find_essence_files(".")
-    data = {
-        "models": essences
-    }
+    # Drop existing table
+    conn.execute("DROP TABLE IF EXISTS results")
 
-    for runner in runner_commands.keys():
-        data[runner] = [-2.0 for i in essences]
-        print(data[runner])
+    # Build runner columns dynamically
+    runner_columns = ", ".join([f'"{r}" REAL' for r in runner_names])
 
-    print(data)
+    conn.execute(f"""
+        CREATE TABLE results (
+            model TEXT PRIMARY KEY,
+            {runner_columns}
+        )
+    """)
 
-    df = pd.DataFrame(data)
-
-    df.to_csv(settings["outfile"], index=False)
+    conn.commit()
+    conn.close()
 
 
 if __name__ == "__main__":
-    form_df()
+    recreate_database()
+    print("Database created/recreated successfully.")
