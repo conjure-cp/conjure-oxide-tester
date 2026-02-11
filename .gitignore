@@ -1,0 +1,7 @@
+*.ipynb
+.venv/
+models/
+runners/
+__pycache__/
+notes
+test-script
