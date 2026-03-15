@@ -21,7 +21,7 @@ uv run utils/timer.py <runner_name> <path_to_model>
 
 ### Example
 ```bash
-uv run utils/timer.py conjure-oxide ./models/basic/bool/01/bool-01.essence
+uv run utils/timer.py oxide_main_sat ./models/basic/bool/01/bool-01.essence
 ```
 
 If the execution fails (non-zero exit code), the runtime is recorded as `-1.0`.
@@ -30,5 +30,5 @@ If the execution fails (non-zero exit code), the runtime is recorded as `-1.0`.
 
 The results are stored in a table named `results` with the following structure:
 - `model`: (Primary Key) The path to the essence model.
-- One column for each runner defined in `settings.json` (e.g., `conjure-oxide`, `cat`), storing the runtime as a `REAL`.
+- One column for each runner defined in `settings.json` (e.g., `oxide_main_sat`, `cat`), storing the runtime as a `REAL`.
 
