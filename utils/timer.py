@@ -56,6 +56,24 @@ def update_runtime(conn, model, runner, runtime):
     conn.commit()
 
 
+def update_failure(conn, model, runner, error_msg):
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS failures (
+            model TEXT,
+            runner TEXT,
+            error_msg TEXT,
+            comment TEXT,
+            PRIMARY KEY (model, runner)
+        )
+    """)
+    conn.execute("""
+        INSERT INTO failures (model, runner, error_msg)
+        VALUES (?, ?, ?)
+        ON CONFLICT(model, runner) DO UPDATE SET error_msg = excluded.error_msg
+    """, (model, runner, error_msg))
+    conn.commit()
+
+
 def time_run(runner, model):
     if runner not in runner_commands:
         raise ValueError(f"Unknown runner: {runner}")
@@ -69,17 +87,20 @@ def time_run(runner, model):
         cmd,
         shell=True,
         text=True,
+        capture_output=True,
     )
 
     runtime = time.perf_counter() - start
+    error_msg = None
 
     if result.returncode == 0:
         print("Runtime:", runtime)
     else:
         print("Run failed. Recording -1.0")
         runtime = -1.0
+        error_msg = result.stderr or result.stdout
 
-    return runtime
+    return runtime, error_msg
 
 
 if __name__ == "__main__":
@@ -88,10 +109,14 @@ if __name__ == "__main__":
         sys.exit(1)
 
     runner = sys.argv[1]
-    # model = Path(sys.argv[2]).name  # normalize name
+
     model = str(Path(sys.argv[2]))
 
     conn = get_connection()
-    runtime = time_run(runner, model)
+    runtime, error_msg = time_run(runner, model)
     update_runtime(conn, model, runner, runtime)
+
+    if error_msg:
+        update_failure(conn, model, runner, error_msg)
+
     conn.close()
