@@ -30,9 +30,12 @@ def recreate_database():
         )
     """)
     conn.execute("""
-        CREATE TABLE failures (
-            model TEXT PRIMARY KEY,
-            reason TEXT
+        CREATE TABLE IF NOT EXISTS failures (
+            model TEXT,
+            runner TEXT,
+            error_msg TEXT,
+            comment TEXT,
+            PRIMARY KEY (model, runner)
         )
     """)
 
