@@ -1,10 +1,13 @@
+## uv
+
+This repo uses uv as a project manager. To add new deps just do `uv add <depname>`. To run scripts do `uv run <path>`
 
 ## Setup
 
 Before running tests, you may need to initialize or reset the database. Note that `utils/setup.py` will **drop the existing results table**.
 
 ```bash
-python3 utils/setup.py
+uv run utils/setup.py
 ```
 
 ## Running the Timer
@@ -13,12 +16,12 @@ To time a model with a specific runner, use `utils/timer.py`. The script will ex
 
 ### Usage
 ```bash
-python3 utils/timer.py <runner_name> <path_to_model>
+uv run utils/timer.py <runner_name> <path_to_model>
 ```
 
 ### Example
 ```bash
-python3 utils/timer.py conjure-oxide ./models/basic/bool/01/bool-01.essence
+uv run utils/timer.py conjure-oxide ./models/basic/bool/01/bool-01.essence
 ```
 
 If the execution fails (non-zero exit code), the runtime is recorded as `-1.0`.
