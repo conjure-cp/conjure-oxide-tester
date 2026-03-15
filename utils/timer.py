@@ -34,7 +34,12 @@ def ensure_table_exists(conn):
             {runner_columns}
         )
     """)
-    conn.commit()
+    conn.execute(f"""
+        CREATE TABLE failures (
+            model TEXT PRIMARY KEY,
+            reason TEXT
+        )
+    """)
 
 
 def update_runtime(conn, model, runner, runtime):
@@ -66,11 +71,14 @@ def update_failure(conn, model, runner, error_msg):
             PRIMARY KEY (model, runner)
         )
     """)
-    conn.execute("""
+    conn.execute(
+        """
         INSERT INTO failures (model, runner, error_msg)
         VALUES (?, ?, ?)
         ON CONFLICT(model, runner) DO UPDATE SET error_msg = excluded.error_msg
-    """, (model, runner, error_msg))
+    """,
+        (model, runner, error_msg),
+    )
     conn.commit()
 
 

@@ -18,16 +18,21 @@ def recreate_database():
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA journal_mode=WAL;")
 
-    # Drop existing table
     conn.execute("DROP TABLE IF EXISTS results")
+    conn.execute("DROP TABLE IF EXISTS failures")
 
-    # Build runner columns dynamically
     runner_columns = ", ".join([f'"{r}" REAL' for r in runner_names])
 
     conn.execute(f"""
         CREATE TABLE results (
             model TEXT PRIMARY KEY,
             {runner_columns}
+        )
+    """)
+    conn.execute("""
+        CREATE TABLE failures (
+            model TEXT PRIMARY KEY,
+            reason TEXT
         )
     """)
 
