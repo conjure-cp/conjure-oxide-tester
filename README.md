@@ -24,7 +24,7 @@ uv run utils/timer.py <runner_name> <path_to_model>
 uv run utils/timer.py oxide_main_sat ./models/basic/bool/01/bool-01.essence
 ```
 
-If the execution fails (non-zero exit code), the runtime is recorded as `-1.0`.
+If the execution fails (non-zero exit code), the runtime is recorded as `-1.0` in the `results` table, and also it would put the captured error in the `failures` table.
 
 ## Database Schema
 
