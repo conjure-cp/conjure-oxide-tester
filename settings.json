@@ -4,5 +4,5 @@
     "oxide_main_sat": "./runners/conjure-oxide-main solve -s sat",
     "cat": "cat"
   },
-  "outfile": "/home/shikhar/Documents/VIP/goofballery/bash-test/testing.db"
+  "outfile": "../testing.db"
 }
