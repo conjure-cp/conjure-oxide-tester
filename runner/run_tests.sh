@@ -44,6 +44,12 @@ fi
 # Ensure we are in the project root
 cd "$(dirname "$0")/.." || exit 1
 
+# Cleanup function for SQLite temporary files
+cleanup() {
+    rm -f testing.db-shm testing.db-wal
+}
+trap cleanup EXIT
+
 # Check if parallel is installed
 if ! command -v parallel &> /dev/null; then
     echo "Error: 'parallel' (GNU Parallel) is not installed."
