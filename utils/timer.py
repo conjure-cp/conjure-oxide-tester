@@ -40,11 +40,14 @@ def ensure_table_exists(conn):
 def update_runtime(conn, model, runner, runtime):
     ensure_table_exists(conn)
     # Ensure row exists
-    conn.execute("""
+    conn.execute(
+        """
         INSERT INTO results (model)
         VALUES (?)
         ON CONFLICT(model) DO NOTHING
-    """, (model,))
+    """,
+        (model,),
+    )
 
     # Update specific runner column
     query = f'UPDATE results SET "{runner}" = ? WHERE model = ?'

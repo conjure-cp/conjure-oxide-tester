@@ -36,5 +36,9 @@ def recreate_database():
 
 
 if __name__ == "__main__":
-    recreate_database()
-    print("Database created/recreated successfully.")
+    confirm = input("Type 'I wanna nuke my testing.' to reset your testing db.\n")
+    if confirm == "I wanna nuke my testing.":
+        recreate_database()
+        print("Database created/recreated successfully.")
+    else:
+        print("Aborted.")
