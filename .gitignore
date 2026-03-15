@@ -7,3 +7,4 @@ test-script
 *log*
 *.log
 testing.db
+.ruff_cache/
