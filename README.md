@@ -4,7 +4,7 @@ This repo uses uv as a project manager. To add new deps just do `uv add <depname
 
 ## Setup
 
-Before running tests, you may need to initialize or reset the database. Note that `utils/setup.py` will **drop the existing results table**.
+The database will be created automatically if it does not exist. However, if you want to reset it, you can use `utils/setup.py` (this will **drop the existing results table**).
 
 ```bash
 uv run utils/setup.py

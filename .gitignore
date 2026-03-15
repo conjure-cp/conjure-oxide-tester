@@ -6,3 +6,4 @@ notes
 test-script
 *log*
 *.log
+testing.db

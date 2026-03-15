@@ -23,7 +23,22 @@ def get_connection():
     return conn
 
 
+def ensure_table_exists(conn):
+    # Get all runner names from settings to define columns
+    runner_names = list(runner_commands.keys())
+    runner_columns = ", ".join([f'"{r}" REAL' for r in runner_names])
+
+    conn.execute(f"""
+        CREATE TABLE IF NOT EXISTS results (
+            model TEXT PRIMARY KEY,
+            {runner_columns}
+        )
+    """)
+    conn.commit()
+
+
 def update_runtime(conn, model, runner, runtime):
+    ensure_table_exists(conn)
     # Ensure row exists
     conn.execute("""
         INSERT INTO results (model)
