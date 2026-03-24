@@ -4,7 +4,8 @@
     "conjure": "conjure solve",
     "oxide_main_sat": "conjure-oxide solve -s sat",
     "oxide_main_sat_direct": "conjure-oxide solve -s sat-direct",
-    "oxide_main_sat_order": "conjure-oxide solve -s sat-order"
+    "oxide_main_sat_order": "conjure-oxide solve -s sat-order",
+    "oxide_main_treemorph": "conjure-oxide solve --rewriter morph"
   },
   "outfile": "testing.db"
 }
