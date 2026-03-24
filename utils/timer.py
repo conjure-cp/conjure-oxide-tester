@@ -88,6 +88,33 @@ def time_run(runner, model):
 
     return runtime, error_msg
 
+def time_conjure_run(runner, model):
+    if runner not in runner_commands:
+        raise ValueError(f"Unknown runner: {runner}")
+
+    start = time.perf_counter()
+
+    cmd = f"{runner_commands[runner]} -o temp-{model} ./{model}"
+    print("Running:", cmd)
+
+    result = subprocess.run(
+        cmd,
+        shell=True,
+        text=True,
+        capture_output=True,
+    )
+
+    runtime = time.perf_counter() - start
+    error_msg = None
+
+    if result.returncode == 0:
+        print("Runtime:", runtime)
+    else:
+        print("Run failed. Recording -1.0")
+        runtime = -1.0
+        error_msg = result.stderr or result.stdout
+
+    return runtime, error_msg
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
@@ -96,10 +123,14 @@ if __name__ == "__main__":
 
     runner = sys.argv[1]
 
+
     model = str(Path(sys.argv[2]))
 
     conn = get_connection()
-    runtime, error_msg = time_run(runner, model)
+    if sys.argv[1] != "conjure":        # FIXME: Ideally, this check should actually grep on the command, not the runner name
+        runtime, error_msg = time_run(runner, model)
+    else:
+        runtime, error_msg = time_conjure_run(runner, model)
     update_runtime(conn, model, runner, runtime)
 
     if error_msg:

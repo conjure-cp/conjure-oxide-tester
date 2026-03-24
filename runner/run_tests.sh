@@ -47,6 +47,10 @@ cd "$(dirname "$0")/.." || exit 1
 # Cleanup function for SQLite temporary files
 cleanup() {
     rm -f testing.db-shm testing.db-wal
+    find -name "**.solution" -delete
+    find -name ".MINION**" -delete
+    rm -rf conjure-output
+    rm -rf temp-models
 }
 trap cleanup EXIT
 
@@ -83,4 +87,4 @@ find models -type f -name "*.essence" | while read -r f; do
         echo "$f"
     fi
 done | \
-	parallel --jobs 1 --progress ::: "python3 utils/timer.py $RUNNER" ::: $(find -name "**.essence")
+	parallel --jobs 90% --progress ::: "python3 utils/timer.py $RUNNER" ::: $(find -name "**.essence")
