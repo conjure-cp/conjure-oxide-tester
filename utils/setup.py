@@ -44,8 +44,13 @@ def recreate_database():
 
 
 if __name__ == "__main__":
-    confirm = input("Type 'I wanna nuke my testing.' to reset your testing db.\n")
-    if confirm == "I wanna nuke my testing.":
+
+    conf_str = "Yes, I want to reset my database"
+
+    print("\033[31;1;4m Abandon all hope [of recovering old results], ye who enter here \033[0m")
+    print("You are running a python script that will look for your output database and wipe it if it exists. All tables and previous results will be deleted forever.")
+    confirm = input("Type '"+conf_str+"' to reset your testing db.\n")
+    if confirm == conf_str:
         recreate_database()
         print("Database created/recreated successfully.")
     else:

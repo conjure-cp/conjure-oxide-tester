@@ -83,5 +83,4 @@ find models -type f -name "*.essence" | while read -r f; do
         echo "$f"
     fi
 done | \
-    parallel --jobs 100% --progress --timeout "$TIMEOUT" \
-    "uv run python3 utils/timer.py $RUNNER {}"
+	parallel --jobs 1 --progress ::: "python3 utils/timer.py $RUNNER" ::: $(find -name "**.essence")
