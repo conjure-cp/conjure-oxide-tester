@@ -26,12 +26,14 @@ def recreate_database():
     conn.execute(f"""
         CREATE TABLE results (
             model TEXT PRIMARY KEY,
+            run_number INTEGER,
             {runner_columns}
         )
     """)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS failures (
             model TEXT,
+            run_number INTEGER,
             runner TEXT,
             error_msg TEXT,
             comment TEXT,
