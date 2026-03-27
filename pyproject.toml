@@ -8,4 +8,5 @@ dependencies = [
     "pandas>=3.0.1",
     "ruff>=0.15.6",
     "textual>=8.2.0",
+    "textual-dev>=1.8.0",
 ]
