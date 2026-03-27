@@ -1,3 +1,8 @@
+# to run this file do
+# docker build -t somename .
+# docker run --rm -it -v ~/Documents:/outfile:z somename
+
+
 # credit for initial dockerfile: Sebastian
 # 1) build-environment: a container that sets up the build environment needed
 #    to compile conjure oxide.
@@ -84,13 +89,22 @@ RUN cargo build --release --features z3-bundled;
 
 FROM archlinux:latest
 
-RUN pacman -Syu --noconfirm zip unzip wget python3 uv clang git htop sqlite jdk-openjdk
+# Added make, gcc, and numactl (for libnuma headers required by runsolver)
+RUN pacman -Syu --noconfirm zip unzip wget python3 uv clang git htop sqlite jdk-openjdk make gcc numactl
 
 RUN git clone https://www.github.com/conjure-cp/conjure-oxide-tester
 
 RUN wget https://github.com/conjure-cp/conjure/releases/download/v2.6.0/conjure-v2.6.0-linux-with-solvers.zip;\
     unzip conjure-v2.6.0-linux-with-solvers.zip;
 
+# Build and install runsolver
+RUN git clone https://github.com/ozgurakgun/runsolver.git /tmp/runsolver && \
+    cd /tmp/runsolver && \
+    git checkout 42f77c75fc511341f475f378f7bc1e5b3d708afb && \
+    cd src && \
+    make && \
+    cp runsolver /conjure-v2.6.0-linux-with-solvers/ && \
+    rm -rf /tmp/runsolver
+
 ENV PATH=/conjure-v2.6.0-linux-with-solvers:$PATH
 COPY --from=builder /build/conjure-oxide/target/release/conjure-oxide /conjure-v2.6.0-linux-with-solvers/
-
