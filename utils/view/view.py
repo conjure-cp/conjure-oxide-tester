@@ -7,7 +7,7 @@ from textual.widgets import DataTable, Footer, Header
 from textual.binding import Binding
 from edit_cell import EditCellModal
 from sort_modal import SortModal
-
+from filter_modal import FilterModal
 
 class SQLiteViewer(App):
     # Setup the htop-style footer controls
@@ -31,8 +31,8 @@ class SQLiteViewer(App):
     def __init__(self, db_path: str):
         super().__init__()
         self.db_path = db_path
-        # Track the current sort state so it persists across edits
         self.current_sort = "model ASC"
+        self.current_filter = ""
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -54,8 +54,13 @@ class SQLiteViewer(App):
                 except sqlite3.OperationalError:
                     pass
 
-                # Use self.current_sort instead of a hardcoded parameter
-                cur.execute(f"SELECT * FROM results ORDER BY {self.current_sort}")
+                # Build the query dynamically
+                query = "SELECT * FROM results"
+                if self.current_filter.strip():
+                    query += f" WHERE {self.current_filter}"
+                query += f" ORDER BY {self.current_sort}"
+
+                cur.execute(query)
 
                 col_names = [description[0] for description in cur.description]
                 self.table.add_columns(*col_names)
@@ -65,10 +70,20 @@ class SQLiteViewer(App):
                     self.table.add_row(*clean_row)
 
         except Exception as e:
-            self.notify(f"Error loading DB: {e}", severity="error")
+            # If the user types invalid SQL, show an error and don't crash
+            self.notify(f"Query Error: {e}", severity="error")
 
     def action_filter(self) -> None:
-        self.notify("F1 pressed: Bring up an Input modal to write a WHERE clause.")
+        def apply_filter(new_filter: str | None) -> None:
+            if new_filter is not None:
+                self.current_filter = new_filter.strip()
+                self.load_data()
+                if self.current_filter:
+                    self.notify(f"Filter applied: {self.current_filter}")
+                else:
+                    self.notify("Filter cleared.")
+
+        self.push_screen(FilterModal(self.current_filter), apply_filter)
 
     def action_sort(self) -> None:
         if not self.table.columns:
