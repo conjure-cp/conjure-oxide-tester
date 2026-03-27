@@ -1,7 +1,11 @@
+# watch.py
+
+import sys
 import sqlite3
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Footer, Header
 from textual.binding import Binding
+
 
 class SQLiteViewer(App):
     # Setup the htop-style footer controls
@@ -9,8 +13,37 @@ class SQLiteViewer(App):
         Binding("f1", "filter", "Filter"),
         Binding("f2", "sort", "Sort"),
         Binding("f3", "insert", "Edit Comment"),
-        Binding("q", "quit", "Quit")
+        Binding("q", "quit", "Quit"),
+
+        Binding("shift+down", "fast_down", show=False),
+        Binding("shift+up", "fast_up", show=False),
+        Binding("shift+right", "fast_right", show=False),
+        Binding("shift+left", "fast_left", show=False),
     ]
+
+    def action_fast_down(self) -> None:
+        target_row = min(
+            self.table.row_count - 1, self.table.cursor_coordinate.row + 10
+        )
+        self.table.move_cursor(row=target_row)
+
+    def action_fast_up(self) -> None:
+        target_row = max(0, self.table.cursor_coordinate.row - 10)
+        self.table.move_cursor(row=target_row)
+
+    def action_fast_right(self) -> None:
+        target_col = min(
+            len(self.table.columns) - 1, self.table.cursor_coordinate.column + 3
+        )
+        self.table.move_cursor(column=target_col)
+
+    def action_fast_left(self) -> None:
+        target_col = max(0, self.table.cursor_coordinate.column - 3)
+        self.table.move_cursor(column=target_col)
+
+    def __init__(self, db_path: str):
+        super().__init__()
+        self.db_path = db_path
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -22,23 +55,29 @@ class SQLiteViewer(App):
         self.table.cursor_type = "row"
         self.load_data()
 
-    def load_data(self, order_by="model", filter_query=""):
-        # Clear existing data when reloading
+    def load_data(self, order_by="model"):
+        # clear(columns=True) wipes existing columns so we don't duplicate them on reload
         self.table.clear(columns=True)
-        
-        # Connect to your DB (replace with your actual db path)
-        # conn = sqlite3.connect("res/db/testing_runsolver-4G-150proc-1800s.db")
-        # cur = conn.cursor()
-        # cur.execute(f"SELECT model, runner, runtime, comment FROM results {filter_query} ORDER BY {order_by}")
-        # rows = cur.fetchall()
-        
-        # Mock data for demonstration
-        self.table.add_columns("Model", "Runner", "Runtime", "Comment")
-        mock_rows = [
-            ("model_1.essence", "oxide_main_minion", 12.4, ""),
-            ("model_2.essence", "oxide_main_sat", 3.1, "Fast"),
-        ]
-        self.table.add_rows(mock_rows)
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cur = conn.cursor()
+
+                try:
+                    cur.execute("ALTER TABLE results ADD COLUMN comment TEXT;")
+                except sqlite3.OperationalError:
+                    pass
+
+                cur.execute(f"SELECT * FROM results ORDER BY {order_by}")
+
+                col_names = [description[0] for description in cur.description]
+                self.table.add_columns(*col_names)
+
+                for row in cur.fetchall():
+                    clean_row = [str(item) if item is not None else "" for item in row]
+                    self.table.add_row(*clean_row)
+
+        except Exception as e:
+            self.notify(f"Error loading DB: {e}", severity="error")
 
     def action_filter(self) -> None:
         self.notify("F1 pressed: Bring up an Input modal to write a WHERE clause.")
@@ -51,6 +90,11 @@ class SQLiteViewer(App):
         row_key, _ = self.table.coordinate_to_cell_key(self.table.cursor_coordinate)
         self.notify(f"F3 pressed: Edit comment for row {row_key}")
 
+
 if __name__ == "__main__":
-    app = SQLiteViewer()
+    if len(sys.argv) < 2:
+        print("Usage: uv run python watch.py <path_to_db>")
+        sys.exit(1)
+
+    app = SQLiteViewer(db_path=sys.argv[1])
     app.run()
