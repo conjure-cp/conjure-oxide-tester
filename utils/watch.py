@@ -14,32 +14,17 @@ class SQLiteViewer(App):
         Binding("f2", "sort", "Sort"),
         Binding("f3", "insert", "Edit Comment"),
         Binding("q", "quit", "Quit"),
-
-        Binding("shift+down", "fast_down", show=False),
-        Binding("shift+up", "fast_up", show=False),
-        Binding("shift+right", "fast_right", show=False),
-        Binding("shift+left", "fast_left", show=False),
+        Binding("shift+right", "fast_right", "Fast Right", show=False),
+        Binding("shift+left", "fast_left", "Fast Left", show=False),
     ]
 
-    def action_fast_down(self) -> None:
-        target_row = min(
-            self.table.row_count - 1, self.table.cursor_coordinate.row + 10
-        )
-        self.table.move_cursor(row=target_row)
-
-    def action_fast_up(self) -> None:
-        target_row = max(0, self.table.cursor_coordinate.row - 10)
-        self.table.move_cursor(row=target_row)
-
     def action_fast_right(self) -> None:
-        target_col = min(
-            len(self.table.columns) - 1, self.table.cursor_coordinate.column + 3
-        )
-        self.table.move_cursor(column=target_col)
+        # Pan the viewport right by 30 characters
+        self.table.scroll_to(x=self.table.scroll_x + 30, animate=False)
 
     def action_fast_left(self) -> None:
-        target_col = max(0, self.table.cursor_coordinate.column - 3)
-        self.table.move_cursor(column=target_col)
+        # Pan the viewport left by 30 characters
+        self.table.scroll_to(x=max(0, self.table.scroll_x - 30), animate=False)
 
     def __init__(self, db_path: str):
         super().__init__()
