@@ -72,10 +72,17 @@ has_operand() {
     grep -q "$operand" "$filename"
 }
 
+# Get DB path from settings.json
+DB_PATH=$(python3 -c "import json; print(json.load(open('settings.json'))['outfile'])")
+
+# Query the current max run_number and increment by 1
+CURRENT_RUN=$(sqlite3 "$DB_PATH" "SELECT IFNULL(MAX(run_number), 0) FROM results;" 2>/dev/null || echo 0)
+NEXT_RUN=$((CURRENT_RUN + 1))
+
 if [ -n "$OPERAND" ]; then
-    echo "Starting tests for runner: $RUNNER (Timeout: $TIMEOUT, Filtering by: $OPERAND)"
+    echo "Starting tests for runner: $RUNNER (Timeout: $TIMEOUT, Filtering by: $OPERAND, Run: $NEXT_RUN)"
 else
-    echo "Starting tests for runner: $RUNNER (Timeout: $TIMEOUT)"
+    echo "Starting tests for runner: $RUNNER (Timeout: $TIMEOUT, Run: $NEXT_RUN)"
 fi
 
 # Find all .essence files in the models directory
