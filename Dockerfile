@@ -89,8 +89,8 @@ RUN cargo build --release --features z3-bundled;
 
 FROM archlinux:latest
 
-# Added make, gcc, and numactl (for libnuma headers required by runsolver)
-RUN pacman -Syu --noconfirm zip unzip wget python3 uv clang git htop sqlite jdk-openjdk make gcc numactl
+# Added make, gcc, numactl, parallel, and vim
+RUN pacman -Syu --noconfirm zip unzip wget python3 uv clang git htop sqlite jdk-openjdk make gcc numactl parallel vim
 
 RUN git clone https://www.github.com/conjure-cp/conjure-oxide-tester
 
