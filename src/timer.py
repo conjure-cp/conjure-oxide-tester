@@ -17,14 +17,16 @@ runner_commands = settings["runner_commands"]
 db_path = settings["outfile"]
 
 
-def get_connection():
+def get_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(db_path, timeout=30)
     conn.execute("PRAGMA journal_mode=WAL;")
 
     return conn
 
 
-def update_runtime(conn, model, runner, runtime, run_number):
+def update_runtime(
+    conn: sqlite3.Connection, model: str, runner: str, runtime: float, run_number: int
+) -> None:
     conn.execute(
         """
         INSERT INTO results (model, run_number)
@@ -41,7 +43,13 @@ def update_runtime(conn, model, runner, runtime, run_number):
     conn.commit()
 
 
-def update_failure(conn, model, runner, error_msg, run_number):
+def update_failure(
+    conn: sqlite3.Connection,
+    model: str,
+    runner: str,
+    error_msg: str,
+    run_number: int,
+) -> None:
     conn.execute(
         """
         INSERT INTO failures (model, runner, run_number, error_msg)
@@ -54,7 +62,7 @@ def update_failure(conn, model, runner, error_msg, run_number):
     conn.commit()
 
 
-def time_run(runner, model):
+def time_run(runner: str, model: str) -> tuple[float, str | None]:
     if runner not in runner_commands:
         raise ValueError(f"Unknown runner: {runner}")
 
@@ -71,7 +79,7 @@ def time_run(runner, model):
     )
 
     runtime = time.perf_counter() - start
-    error_msg = None
+    error_msg: str | None = None
 
     if result.returncode == 0:
         print("Runtime:", runtime)
@@ -83,7 +91,7 @@ def time_run(runner, model):
     return runtime, error_msg
 
 
-def time_conjure_run(runner, model):
+def time_conjure_run(runner: str, model: str) -> tuple[float, str | None]:
     if runner not in runner_commands:
         raise ValueError(f"Unknown runner: {runner}")
 
@@ -100,7 +108,7 @@ def time_conjure_run(runner, model):
     )
 
     runtime = time.perf_counter() - start
-    error_msg = None
+    error_msg: str | None = None
 
     if result.returncode == 0:
         print("Runtime:", runtime)

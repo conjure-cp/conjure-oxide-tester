@@ -14,7 +14,7 @@ db_path = settings["outfile"]
 runner_names = list(settings["runner_commands"].keys())
 
 
-def recreate_database():
+def recreate_database() -> None:
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA journal_mode=WAL;")
 

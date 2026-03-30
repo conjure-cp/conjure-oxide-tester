@@ -16,7 +16,7 @@ with Path("settings.json").open("r", encoding="utf-8") as f:
 db_path = settings["outfile"]
 
 
-def main():
+def main() -> None:
     conn = sqlite3.connect(db_path)
     df = pd.read_sql("SELECT * FROM results", conn)
 
