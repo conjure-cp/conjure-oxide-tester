@@ -4,6 +4,7 @@ import sys
 import sqlite3
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Footer, Header
+from textual.coordinate import Coordinate
 from textual.binding import Binding
 from edit_cell import EditCellModal
 from sort_modal import SortModal
@@ -11,6 +12,8 @@ from filter_modal import FilterModal
 
 
 class SQLiteViewer(App):
+    table: DataTable
+
     BINDINGS = [
         Binding("t", "switch_table", "Next Table"),
         Binding("f1", "filter", "Filter"),
@@ -142,8 +145,8 @@ class SQLiteViewer(App):
             return
 
         comment_col_idx = col_names.index("comment")
-        model_name = self.table.get_cell_at((row_index, 0))
-        current_value = self.table.get_cell_at((row_index, comment_col_idx))
+        model_name = self.table.get_cell_at(Coordinate(row_index, 0))
+        current_value = self.table.get_cell_at(Coordinate(row_index, comment_col_idx))
 
         def check_and_save(new_value: str | None) -> None:
             if new_value is not None:

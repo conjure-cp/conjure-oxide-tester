@@ -49,6 +49,7 @@ class SortModal(ModalScreen[tuple[str, str]]):
         if event.button.id == "apply":
             col = self.query_one("#col_select", Select).value
             order = self.query_one("#order_select", Select).value
-            self.dismiss((col, order))
+            if isinstance(col, str) and isinstance(order, str):
+                self.dismiss((col, order))
         else:
             self.dismiss(None)
