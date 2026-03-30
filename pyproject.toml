@@ -10,3 +10,8 @@ dependencies = [
     "textual>=8.2.0",
     "textual-dev>=1.8.0",
 ]
+
+[dependency-groups]
+dev = [
+    "ty>=0.0.26",
+]
