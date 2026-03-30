@@ -25,7 +25,12 @@ def get_connection() -> sqlite3.Connection:
 
 
 def update_runtime(
-    conn: sqlite3.Connection, model: str, runner: str, runtime: float, run_number: int
+    conn: sqlite3.Connection,
+    model: str,
+    runner: str,
+    runtime: float,
+    run_number: int,
+    sat_closures: int,
 ) -> None:
     conn.execute(
         """
@@ -37,8 +42,8 @@ def update_runtime(
         (model, run_number),
     )
 
-    query = f'UPDATE results SET "{runner}" = ? WHERE model = ? AND run_number = ?'
-    conn.execute(query, (runtime, model, run_number))
+    query = f'UPDATE results SET "{runner}" = ?, sat_closures = ? WHERE model = ? AND run_number = ?'
+    conn.execute(query, (runtime, sat_closures, model, run_number))
 
     conn.commit()
 
@@ -136,7 +141,7 @@ if __name__ == "__main__":
         runtime, error_msg = time_run(runner, model)
     else:
         runtime, error_msg = time_conjure_run(runner, model)
-    update_runtime(conn, model, runner, runtime, run_number)
+    update_runtime(conn, model, runner, runtime, run_number, -1) # FIXME: placeholder for now
 
     if error_msg:
         update_failure(conn, model, runner, error_msg, run_number)
