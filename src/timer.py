@@ -20,6 +20,7 @@ db_path = settings["outfile"]
 def get_connection():
     conn = sqlite3.connect(db_path, timeout=30)
     conn.execute("PRAGMA journal_mode=WAL;")
+
     return conn
 
 
@@ -109,6 +110,7 @@ def time_conjure_run(runner, model):
         error_msg = result.stderr or result.stdout
 
     return runtime, error_msg
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
