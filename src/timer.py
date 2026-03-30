@@ -28,34 +28,27 @@ def update_runtime(conn, model, runner, runtime, run_number):
         """
         INSERT INTO results (model, run_number)
         VALUES (?, ?)
-        ON CONFLICT(model) DO UPDATE SET run_number = excluded.run_number
+        ON CONFLICT(model, run_number)
+        DO NOTHING
         """,
         (model, run_number),
     )
 
-    query = f'UPDATE results SET "{runner}" = ? WHERE model = ?'
-    conn.execute(query, (runtime, model))
+    query = f'UPDATE results SET "{runner}" = ? WHERE model = ? AND run_number = ?'
+    conn.execute(query, (runtime, model, run_number))
 
     conn.commit()
 
 
-def update_failure(conn, model, runner, error_msg):
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS failures (
-            model TEXT,
-            runner TEXT,
-            error_msg TEXT,
-            comment TEXT,
-            PRIMARY KEY (model, runner)
-        )
-    """)
+def update_failure(conn, model, runner, error_msg, run_number):
     conn.execute(
         """
-        INSERT INTO failures (model, runner, error_msg)
-        VALUES (?, ?, ?)
-        ON CONFLICT(model, runner) DO UPDATE SET error_msg = excluded.error_msg
-    """,
-        (model, runner, error_msg),
+        INSERT INTO failures (model, runner, run_number, error_msg)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(model, runner, run_number)
+        DO UPDATE SET error_msg = excluded.error_msg
+        """,
+        (model, runner, run_number, error_msg),
     )
     conn.commit()
 
@@ -136,6 +129,6 @@ if __name__ == "__main__":
     update_runtime(conn, model, runner, runtime, run_number)
 
     if error_msg:
-        update_failure(conn, model, runner, error_msg)
+        update_failure(conn, model, runner, error_msg, run_number)
 
     conn.close()
