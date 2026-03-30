@@ -23,14 +23,14 @@ def get_connection():
     return conn
 
 
-def update_runtime(conn, model, runner, runtime):
+def update_runtime(conn, model, runner, runtime, run_number):
     conn.execute(
         """
-        INSERT INTO results (model)
-        VALUES (?)
-        ON CONFLICT(model) DO NOTHING
-    """,
-        (model,),
+        INSERT INTO results (model, run_number)
+        VALUES (?, ?)
+        ON CONFLICT(model) DO UPDATE SET run_number = excluded.run_number
+        """,
+        (model, run_number),
     )
 
     query = f'UPDATE results SET "{runner}" = ? WHERE model = ?'
@@ -88,6 +88,7 @@ def time_run(runner, model):
 
     return runtime, error_msg
 
+
 def time_conjure_run(runner, model):
     if runner not in runner_commands:
         raise ValueError(f"Unknown runner: {runner}")
@@ -117,21 +118,22 @@ def time_conjure_run(runner, model):
     return runtime, error_msg
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python timer.py <runner> <model>")
+    if len(sys.argv) != 4:
+        print("Usage: python timer.py <runner> <model> <run_number>")
         sys.exit(1)
 
     runner = sys.argv[1]
-
-
     model = str(Path(sys.argv[2]))
+    run_number = int(sys.argv[3])
 
     conn = get_connection()
-    if sys.argv[1] != "conjure":        # FIXME: Ideally, this check should actually grep on the command, not the runner name
+    if (
+        sys.argv[1] != "conjure"
+    ):  # FIXME: Ideally, this check should actually grep on the command, not the runner name
         runtime, error_msg = time_run(runner, model)
     else:
         runtime, error_msg = time_conjure_run(runner, model)
-    update_runtime(conn, model, runner, runtime)
+    update_runtime(conn, model, runner, runtime, run_number)
 
     if error_msg:
         update_failure(conn, model, runner, error_msg)
