@@ -5,7 +5,7 @@
     "oxide_main_sat": "conjure-oxide solve -s sat",
     "oxide_main_sat_direct": "conjure-oxide solve -s sat-direct",
     "oxide_main_sat_order": "conjure-oxide solve -s sat-order",
-    "oxide_main_treemorph": "conjure-oxide solve --rewriter morph"
+    "oxide_main_smt": "conjure-oxide solve -s smt"
   },
-  "outfile": "testing.db"
+  "outfile": "res/db/testing_runsolver-4G-150proc-1800s.db"
 }
