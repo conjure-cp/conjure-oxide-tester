@@ -1,19 +1,20 @@
 #!/bin/bash
 
 usage() {
-    echo "Usage: $0 <runner1> [runner2 ...] [timeout] [operand]"
+    echo "Usage: $0 [--no-closures] <runner1> [runner2 ...] [timeout] [operand]"
     echo ""
     echo "Run all Essence models in the 'models/' directory using the specified runners."
     echo "Runners are defined in 'settings.json'."
     echo ""
     echo "Arguments:"
-    echo "  runner(s): One or more runners (e.g., oxide_main_sat oxide_main_minion)"
-    echo "  timeout:   Optional. Default is 30s (e.g., 1m, 10s)"
-    echo "  operand:   Optional. Filter models that contain this string (e.g., 'min', 'max')"
+    echo "  --no-closures: Optional. Disable SAT closure collection."
+    echo "  runner(s):     One or more runners (e.g., oxide_main_sat oxide_main_minion)"
+    echo "  timeout:       Optional. Default is 30s (e.g., 1m, 10s)"
+    echo "  operand:       Optional. Filter models that contain this string (e.g., 'min', 'max')"
     echo ""
     echo "Examples:"
     echo "  $0 oxide_main_minion"
-    echo "  $0 oxide_main_sat oxide_main_minion"
+    echo "  $0 --no-closures oxide_main_sat"
     echo "  $0 oxide_main_sat 1m"
     echo "  $0 oxide_main_sat oxide_main_minion 1m max"
     exit 1
@@ -25,9 +26,20 @@ fi
 
 TIMEOUT="30s"
 OPERAND=""
+COLLECT_CLOSURES_FLAG=""
 
-# Detect timeout / operand from the end
-ARGS=("$@")
+# Detect --no-closures anywhere in arguments
+NEW_ARGS=()
+for arg in "$@"; do
+    if [ "$arg" == "--no-closures" ]; then
+        COLLECT_CLOSURES_FLAG="--no-closures"
+    else
+        NEW_ARGS+=("$arg")
+    fi
+done
+
+# Detect timeout / operand from the end of remaining args
+ARGS=("${NEW_ARGS[@]}")
 LAST_ARG=${ARGS[-1]}
 SECOND_LAST_ARG=${ARGS[-2]}
 
@@ -39,7 +51,7 @@ elif [[ $SECOND_LAST_ARG =~ ^[0-9] ]]; then
     OPERAND=$LAST_ARG
     unset 'ARGS[-1]'
     unset 'ARGS[-1]'
-elif [ "$#" -ge 2 ]; then
+elif [ "${#ARGS[@]}" -ge 2 ]; then
     OPERAND=$LAST_ARG
     unset 'ARGS[-1]'
 fi
@@ -83,6 +95,7 @@ echo "Starting tests"
 echo "Runners: ${RUNNERS[*]}"
 echo "Timeout: $TIMEOUT"
 [ -n "$OPERAND" ] && echo "Filter: $OPERAND"
+[ -n "$COLLECT_CLOSURES_FLAG" ] && echo "Closures: Disabled"
 echo "Run: $NEXT_RUN"
 
 FILES=$(find models -type f -name "*.essence" | while read -r f; do
@@ -92,6 +105,6 @@ FILES=$(find models -type f -name "*.essence" | while read -r f; do
 done)
 
 parallel --jobs 90% --progress \
-    python3 src/timer.py {1} {2} $NEXT_RUN \
+    python3 src/timer.py {1} {2} $NEXT_RUN $COLLECT_CLOSURES_FLAG \
     ::: "${RUNNERS[@]}" \
     ::: $FILES
