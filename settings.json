@@ -2,7 +2,8 @@
   "runner_commands": {
     "oxide_main_minion": "conjure-oxide solve",
     "conjure": "conjure solve",
-    "oxide_main_sat": "conjure-oxide -s sat-direct",
+    "oxide_main_sat": "conjure-oxide solve -s sat",
+    "oxide_main_sat_direct": "conjure-oxide solve -s sat-direct",
     "oxide_main_sat_order": "conjure-oxide solve -s sat-order",
     "oxide_main_smt": "conjure-oxide solve -s smt"
   },
