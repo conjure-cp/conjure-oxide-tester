@@ -60,13 +60,13 @@ def update_failure(conn, model, runner, error_msg):
     conn.commit()
 
 
-def time_run(runner, model):
+def time_rust_run(runner, model, runsolver_cfg):
     if runner not in runner_commands:
         raise ValueError(f"Unknown runner: {runner}")
 
     start = time.perf_counter()
 
-    cmd = f"{runner_commands[runner]} ./{model}"
+    cmd = f"{runsolver_cfg} {runner_commands[runner]} ./{model}"
     print("Running:", cmd)
 
     result = subprocess.run(
@@ -88,13 +88,13 @@ def time_run(runner, model):
 
     return runtime, error_msg
 
-def time_conjure_run(runner, model):
+def time_conjure_run(runner, model, runsolver_cfg):
     if runner not in runner_commands:
         raise ValueError(f"Unknown runner: {runner}")
 
     start = time.perf_counter()
 
-    cmd = f"{runner_commands[runner]} -o temp-{model} ./{model}"
+    cmd = f"{runsolver_cfg} {runner_commands[runner]} -o temp-{model} ./{model}"
     print("Running:", cmd)
 
     result = subprocess.run(
