@@ -16,6 +16,10 @@ with Path("settings.json").open("r", encoding="utf-8") as f:
 runner_commands = settings["runner_commands"]
 db_path = settings["outfile"]
 
+wall = settings["runsolver_cfg"]["walltime"]
+cpus = settings["runsolver_cfg"]["cpus"]
+mem = settings["runsolver_cfg"]["memory"]
+
 
 def get_connection():
     conn = sqlite3.connect(db_path, timeout=30)
@@ -30,7 +34,7 @@ def update_runtime(conn, model, runner, runtime):
         VALUES (?)
         ON CONFLICT(model) DO NOTHING
     """,
-        (model,),
+        (model, ),
     )
 
     query = f'UPDATE results SET "{runner}" = ? WHERE model = ?'
@@ -122,15 +126,16 @@ if __name__ == "__main__":
         sys.exit(1)
 
     runner = sys.argv[1]
-
+    
+    runsolver_cfg = f"runsolver -R {mem} -C {cpus} -W {wall}"
 
     model = str(Path(sys.argv[2]))
 
     conn = get_connection()
     if sys.argv[1] != "conjure":        # FIXME: Ideally, this check should actually grep on the command, not the runner name
-        runtime, error_msg = time_run(runner, model)
+        runtime, error_msg = time_rust_run(runner, model, runsolver_cfg)
     else:
-        runtime, error_msg = time_conjure_run(runner, model)
+        runtime, error_msg = time_conjure_run(runner, model, runsolver_cfg)
     update_runtime(conn, model, runner, runtime)
 
     if error_msg:

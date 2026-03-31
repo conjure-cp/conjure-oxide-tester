@@ -7,5 +7,10 @@
     "oxide_main_sat_order": "conjure-oxide solve -s sat-order",
     "oxide_main_treemorph": "conjure-oxide solve --rewriter morph"
   },
-  "outfile": "testing.db"
+  "outfile": "testing.db",
+  "runsolver_cfg": {
+    "memory": "4G",
+    "walltime": "1800s",
+    "cpus": "1"
+  }
 }
