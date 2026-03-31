@@ -1,4 +1,4 @@
-# timer.py
+# timer.pytimer.py
 
 from pathlib import Path
 import sqlite3
@@ -18,6 +18,11 @@ with Path("settings.json").open("r", encoding="utf-8") as f:
 runner_commands = settings["runner_commands"]
 db_path = settings["outfile"]
 
+wall = settings["runsolver_cfg"]["walltime"]
+cpus = settings["runsolver_cfg"]["cpus"]
+mem = settings["runsolver_cfg"]["memory"]
+
+runsolver_cfg = f"runsolver -R {mem} -C {cpus} -W {wall}"
 
 def get_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(db_path, timeout=30)
@@ -119,7 +124,7 @@ def time_run(
     unique_id = f"{runner}_{safe_model}_{os.getpid()}"
     sat_file = Path(f"temp_{unique_id}.cnf")
 
-    cmd = f"{runner_commands[runner]} ./{model}"
+    cmd = f"{runsolver_cfg} {runner_commands[runner]} ./{model}"
     if is_sat:
         cmd = f"{runner_commands[runner]} --save-solver-input-file {sat_file} ./{model}"
 
@@ -176,7 +181,7 @@ def time_conjure_run(
     out_dir = Path(f"temp-conjure-{unique_id}")
 
     # Conjure solve to get eprime
-    cmd = f"{cmd_str} -o {out_dir} ./{model}"
+    cmd = f"{runsolver_cfg} {cmd_str} -o {out_dir} ./{model}"
     print("Running:", cmd)
 
     start = time.perf_counter()
