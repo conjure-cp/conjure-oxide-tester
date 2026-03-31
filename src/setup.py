@@ -27,7 +27,8 @@ def recreate_database() -> None:
         CREATE TABLE results (
             model TEXT,
             run_number INTEGER,
-            {runner_columns},
+            {runner_columns}, 
+            sat_closures INTEGER,     
             PRIMARY KEY (model, run_number)
         )
     """)
