@@ -8,5 +8,10 @@
     "oxide_main_sat_order": "conjure-oxide solve -s sat-order",
     "oxide_main_smt": "conjure-oxide solve -s smt"
   },
-  "outfile": "res/db/testing_runsolver-4G-150proc-1800s.db"
+  "outfile": "testing.db",
+  "runsolver_cfg": {
+    "memory": "4G",
+    "walltime": "1800s",
+    "cpus": "1"
+  }
 }
