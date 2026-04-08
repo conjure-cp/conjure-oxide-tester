@@ -40,6 +40,7 @@ def update_runtime(
     runner: str,
     runtime: float,
     run_number: int,
+    var_count: int,
     sat_closures: int,
 ) -> None:
     conn.execute(
@@ -53,10 +54,16 @@ def update_runtime(
     )
 
     closure_col = f"{runner}_closures"
+    var_col = f"{runner}_variables"
 
     if "sat" in runner.lower() or "conjure" in runner.lower() or sat_closures != -1:
         try:
             conn.execute(f'ALTER TABLE results ADD COLUMN "{runner}" REAL;')
+        except sqlite3.OperationalError:
+            pass
+        
+        try:
+            conn.execute(f'ALTER TABLE results ADD COLUMN "{var_col}" INTEGER;')
         except sqlite3.OperationalError:
             pass
 
@@ -65,8 +72,9 @@ def update_runtime(
         except sqlite3.OperationalError:
             pass
 
-        query = f'UPDATE results SET "{runner}" = ?, "{closure_col}" = ? WHERE model = ? AND run_number = ?'
-        conn.execute(query, (runtime, sat_closures, model, run_number))
+        query = f'UPDATE results SET "{runner}" = ?, "{var_col}" = ?, "{closure_col}" = ? WHERE model = ? AND run_number = ?'
+        conn.execute(query, (runtime, var_count, sat_closures, model, run_number))
+
     else:
         try:
             conn.execute(f'ALTER TABLE results ADD COLUMN "{runner}" REAL;')
@@ -97,24 +105,39 @@ def update_failure(
     conn.commit()
 
 
-def get_sat_closures(cnf_file: Path) -> int:
+def get_dimacs_stats(cnf_file: Path) -> tuple[int, int]:
+    """
+    gets dimacs file and returns:
+        - number of variables
+        - number of closures
+    if error we return -1 
+    """
     if not cnf_file.exists():
-        return -1
+        return -1, -1
     try:
         with cnf_file.open("r") as f:
             for line in f:
                 if line.startswith("p cnf"):
                     parts = line.strip().split()
                     if len(parts) >= 4:
-                        return int(parts[3])
+                        return int(parts[2]), int(parts[3])
     except Exception:
         pass
-    return -1
+    return -1, -1
 
 
 def time_run(
     runner: str, model: str, collect_closures: bool
-) -> tuple[float, int, str | None]:
+) -> tuple[float, int, int, str | None]:
+    """
+    Runs conjure-oxide with runnersolver that is config-ed in settings.json
+
+    returns:
+        - time
+        - number of sat variabels (optional, -1 if collect_closures is false)
+        - number of sat closures (optional, -1 if collect_closures is false)
+        - error message
+    """
     if runner not in runner_commands:
         raise ValueError(f"Unknown runner: {runner}")
 
@@ -145,17 +168,17 @@ def time_run(
 
         sat_closures = -1
         if is_sat:
-            sat_closures = get_sat_closures(sat_file)
+            var_count, sat_closures = get_dimacs_stats(sat_file)
 
         error_msg: str | None = None
         if result.returncode == 0:
-            print(f"Runtime: {runtime:.4f}s, Closures: {sat_closures}")
+            print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
         else:
             print("Run failed. Recording -1.0")
             runtime = -1.0
             error_msg = result.stderr or result.stdout
 
-        return runtime, sat_closures, error_msg
+        return runtime, var_count, sat_closures, error_msg
     finally:
         if is_sat and sat_file.exists():
             sat_file.unlink()
@@ -163,7 +186,18 @@ def time_run(
 
 def time_conjure_run(
     runner: str, model: str, collect_closures: bool
-) -> tuple[float, int, str, str | None]:
+) -> tuple[float, int, int, str, str | None]:
+    """
+    Runs a given model with conjure with runnersolver that is configured
+    in settings.json
+
+    returns:
+        - time
+        - number of sat variabels (optional, -1 if collect_closures is false)
+        - number of sat closures (optional, -1 if collect_closures is false)
+        - 
+        - error message
+    """
     if runner not in runner_commands:
         raise ValueError(f"Unknown runner: {runner}")
 
@@ -179,6 +213,10 @@ def time_conjure_run(
 
     effective_runner = f"{runner}_{solver}" if runner == "conjure" else runner
 
+    
+    # create a unique output directory for savile row/conjure.
+    # this prevents file conflicts and race conditions that would occur 
+    # if multiple threads wrote to the same folder simultaneously.
     safe_model = str(Path(model)).replace("/", "_").replace(".", "_")
     unique_id = f"{effective_runner}_{safe_model}_{os.getpid()}"
     out_dir = Path(f"temp-conjure-{unique_id}")
@@ -209,15 +247,15 @@ def time_conjure_run(
                     sr_cmd = f"savilerow -sat -out-sat {sat_file} {eprime_file}"
                     print("Running:", sr_cmd)
                     subprocess.run(sr_cmd, shell=True, capture_output=True)
-                    sat_closures = get_sat_closures(sat_file)
+                    var_count, sat_closures = get_dimacs_stats(sat_file)
 
-            print(f"Runtime: {runtime:.4f}s, Closures: {sat_closures}")
+            print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
         else:
             print("Run failed. Recording -1.0")
             runtime = -1.0
             error_msg = result.stderr or result.stdout
 
-        return runtime, sat_closures, effective_runner, error_msg
+        return runtime, var_count, sat_closures, effective_runner, error_msg
     finally:
         if out_dir.exists():
             shutil.rmtree(out_dir)
@@ -239,14 +277,14 @@ if __name__ == "__main__":
 
     conn = get_connection()
     if "conjure" not in runner.lower():
-        runtime, sat_closures, error_msg = time_run(runner, model, collect_closures)
+        runtime, var_count, sat_closures, error_msg = time_run(runner, model, collect_closures)
         effective_runner = runner
     else:
-        runtime, sat_closures, effective_runner, error_msg = time_conjure_run(
+        runtime, var_count, sat_closures, effective_runner, error_msg = time_conjure_run(
             runner, model, collect_closures
         )
 
-    update_runtime(conn, model, effective_runner, runtime, run_number, sat_closures)
+    update_runtime(conn, model, effective_runner, runtime, run_number, var_count, sat_closures)
 
     if error_msg:
         update_failure(conn, model, effective_runner, error_msg, run_number)

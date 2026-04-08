@@ -7,7 +7,7 @@ usage() {
     echo "Runners are defined in 'settings.json'."
     echo ""
     echo "Arguments:"
-    echo "  --no-closures: Optional. Disable SAT closure collection."
+    echo "  --no-closures: Optional. Disable SAT closure and var number collection."
     echo "  runner(s):     One or more runners (e.g., oxide_main_sat oxide_main_minion)"
     echo "  operand:       Optional. Filter models that contain this string (e.g., 'min', 'max')"
     echo ""
