@@ -1,4 +1,4 @@
-# timer.pytimer.py
+# timer.py
 
 from pathlib import Path
 import sqlite3
@@ -9,6 +9,9 @@ import subprocess
 import shutil
 import os
 
+if shutil.which("runsolver") is None:
+    sys.exit("Error: 'runsolver' is not installed or not found in PATH.\n"
+             "Please install it from: https://github.com/ozgurakgun/runsolver")
 # ------------------------
 # Load settings
 # ------------------------
@@ -171,7 +174,7 @@ def time_conjure_run(
         try:
             idx = parts.index("--solver")
             solver = parts[idx + 1]
-        except ValueError, IndexError:
+        except (ValueError, IndexError):
             pass
 
     effective_runner = f"{runner}_{solver}" if runner == "conjure" else runner
