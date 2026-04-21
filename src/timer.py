@@ -206,9 +206,11 @@ def time_run(
         # Always check for solution if the runner was supposed to find one
         found_solution = False
         if "conjure-oxide" in base_cmd:
-            found_solution = solution_json.exists()
+            # check that it's not empty (i.e., not just '[]')
+            found_solution = solution_json.exists() and solution_json.stat().st_size > 2
         else:
-            found_solution = solution_file.exists()
+            # check that it exists and is not empty
+            found_solution = solution_file.exists() and solution_file.stat().st_size > 0
 
         if result.returncode == 0 and found_solution:
             print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
@@ -290,10 +292,12 @@ def time_conjure_run(
         error_msg: str | None = None
 
         if result.returncode == 0:
-            # check if a solution exists in the out_dir.
+            # check if a solution exists in the out_dir and it is not empty.
             solution_files = list(out_dir.glob("*.solution"))
             
-            if not solution_files:
+            found_solution = any(f.stat().st_size > 0 for f in solution_files)
+
+            if not found_solution:
                 print("No solution file found in conjure out_dir. Recording -1.0")
                 runtime = -1.0
                 error_msg = "No solution found in output directory"
