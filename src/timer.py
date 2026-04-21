@@ -203,24 +203,26 @@ def time_run(
             var_count, sat_closures = get_dimacs_stats(sat_file)
 
         error_msg: str | None = None
-        if result.returncode == 0:
-            # check if it actually produced a solution.
-            found_solution = False
-            if "conjure-oxide" in base_cmd:
-                found_solution = solution_json.exists()
-            else:
-                found_solution = solution_file.exists()
-
-            if not found_solution:
-                print("No solution file found. Recording -1.0")
-                runtime = -1.0
-                error_msg = "No solution file found (likely UNSAT or silent failure)"
-            else:
-                print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
+        # Always check for solution if the runner was supposed to find one
+        found_solution = False
+        if "conjure-oxide" in base_cmd:
+            found_solution = solution_json.exists()
         else:
-            print("Run failed. Recording -1.0")
+            found_solution = solution_file.exists()
+
+        if result.returncode == 0 and found_solution:
+            print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
+        else:
+            print("Run failed (non-zero exit or no solution). Recording -1.0")
             runtime = -1.0
-            error_msg = result.stderr or result.stdout
+            # Prioritize stderr, but if empty, use stdout
+            error_msg = result.stderr.strip() or result.stdout.strip()
+            if not error_msg and not found_solution:
+                error_msg = "No solution found (likely UNSAT or silent failure)"
+            
+            # Print the error for immediate feedback in logs
+            if error_msg:
+                print(f"Error captured: {error_msg[:200]}...")
 
         return runtime, var_count, sat_closures, error_msg
     finally:
