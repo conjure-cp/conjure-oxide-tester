@@ -150,6 +150,12 @@ def time_run(
     unique_id = f"{runner}_{safe_model}_{os.getpid()}"
     sat_file = Path(f"temp_{unique_id}.cnf")
 
+    # Ensure no old solution file exists
+    model_path = Path(model)
+    solution_file = Path(f"{model_path.stem}.solution")
+    if solution_file.exists():
+        solution_file.unlink()
+
     cmd = f"{runsolver_cfg} {runner_commands[runner]} ./{model}"
     if is_sat:
         cmd = f"{runsolver_cfg} {runner_commands[runner]} --save-solver-input-file {sat_file} ./{model}"
@@ -173,7 +179,14 @@ def time_run(
 
         error_msg: str | None = None
         if result.returncode == 0:
-            print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
+            # check if it actually produced a solution.
+            if not solution_file.exists():
+                print("No solution file found. Recording -1.0")
+                runtime = -1.0
+                error_msg = "No solution file found (likely UNSAT or silent failure)"
+            else:
+                print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
+                solution_file.unlink() # Cleanup
         else:
             print("Run failed. Recording -1.0")
             runtime = -1.0
@@ -183,6 +196,8 @@ def time_run(
     finally:
         if is_sat and sat_file.exists():
             sat_file.unlink()
+        if solution_file.exists():
+            solution_file.unlink()
 
 
 def time_conjure_run(
@@ -241,17 +256,25 @@ def time_conjure_run(
         error_msg: str | None = None
 
         if result.returncode == 0:
-            if collect_closures and runner == "conjure_sat":
-                eprime_files = list(out_dir.glob("*.eprime"))
-                if eprime_files:
-                    eprime_file = eprime_files[0]
-                    sat_file = out_dir / "temp_sat.cnf"
-                    sr_cmd = f"savilerow -sat -out-sat {sat_file} {eprime_file}"
-                    print("Running:", sr_cmd)
-                    subprocess.run(sr_cmd, shell=True, capture_output=True)
-                    var_count, sat_closures = get_dimacs_stats(sat_file)
+            # check if a solution exists in the out_dir.
+            solution_files = list(out_dir.glob("*.solution"))
+            
+            if not solution_files:
+                print("No solution file found in conjure out_dir. Recording -1.0")
+                runtime = -1.0
+                error_msg = "No solution found in output directory"
+            else:
+                if collect_closures and runner == "conjure_sat":
+                    eprime_files = list(out_dir.glob("*.eprime"))
+                    if eprime_files:
+                        eprime_file = eprime_files[0]
+                        sat_file = out_dir / "temp_sat.cnf"
+                        sr_cmd = f"savilerow -sat -out-sat {sat_file} {eprime_file}"
+                        print("Running:", sr_cmd)
+                        subprocess.run(sr_cmd, shell=True, capture_output=True)
+                        var_count, sat_closures = get_dimacs_stats(sat_file)
 
-            print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
+                print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
         else:
             print("Run failed. Recording -1.0")
             runtime = -1.0
