@@ -9,9 +9,6 @@ import subprocess
 import shutil
 import os
 
-if shutil.which("runsolver") is None:
-    sys.exit("Error: 'runsolver' is not installed or not found in PATH.\n"
-             "Please install it from: https://github.com/ozgurakgun/runsolver")
 # ------------------------
 # Load settings
 # ------------------------
@@ -25,7 +22,23 @@ wall = settings["runsolver_cfg"]["walltime"]
 cpus = settings["runsolver_cfg"]["cpus"]
 mem = settings["runsolver_cfg"]["memory"]
 
-runsolver_cfg = f"runsolver -R {mem} -C {cpus} -W {wall}"
+def check_runsolver() -> bool:
+    """Check if runsolver is available and works."""
+    if shutil.which("runsolver") is None:
+        return False
+    try:
+        # Simple test to see if it runs
+        subprocess.run("runsolver --version", shell=True, capture_output=True, check=True)
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return False
+
+HAS_RUNSOLVER = check_runsolver()
+if HAS_RUNSOLVER:
+    runsolver_cfg = f"runsolver -R {mem} -C {cpus} -W {wall}"
+else:
+    print("Warning: 'runsolver' is not installed or broken. Running solvers directly without limits.")
+    runsolver_cfg = ""
 
 def get_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(db_path, timeout=30)
