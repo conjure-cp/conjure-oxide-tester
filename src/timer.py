@@ -156,6 +156,8 @@ def time_run(
 
     print("Running:", cmd)
 
+    var_count = -1
+    sat_closures = -1
     start = time.perf_counter()
     try:
         result = subprocess.run(
@@ -166,7 +168,6 @@ def time_run(
         )
         runtime = time.perf_counter() - start
 
-        sat_closures = -1
         if is_sat:
             var_count, sat_closures = get_dimacs_stats(sat_file)
 
@@ -225,6 +226,8 @@ def time_conjure_run(
     cmd = f"{runsolver_cfg} {cmd_str} -o {out_dir} ./{model}"
     print("Running:", cmd)
 
+    var_count = -1
+    sat_closures = -1
     start = time.perf_counter()
     try:
         result = subprocess.run(
@@ -235,7 +238,6 @@ def time_conjure_run(
         )
         runtime = time.perf_counter() - start
 
-        sat_closures = -1
         error_msg: str | None = None
 
         if result.returncode == 0:

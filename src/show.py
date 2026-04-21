@@ -1,11 +1,11 @@
 # show.py
 
-from pathlib import Path
-import sqlite3
 import json
-import pandas as pd
+import sqlite3
 import sys
+from pathlib import Path
 
+import pandas as pd
 
 # ------------------------
 # Load settings
