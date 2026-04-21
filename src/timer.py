@@ -149,16 +149,28 @@ def time_run(
     safe_model = str(Path(model)).replace("/", "_").replace(".", "_")
     unique_id = f"{runner}_{safe_model}_{os.getpid()}"
     sat_file = Path(f"temp_{unique_id}.cnf")
+    solution_json = Path(f"solution_{unique_id}.json")
 
-    # Ensure no old solution file exists
+    # Ensure no old solution file exists (for conjure-style runners)
     model_path = Path(model)
     solution_file = Path(f"{model_path.stem}.solution")
     if solution_file.exists():
         solution_file.unlink()
 
-    cmd = f"{runsolver_cfg} {runner_commands[runner]} ./{model}"
+    # Build command
+    base_cmd = runner_commands[runner]
+    cmd = f"{runsolver_cfg} {base_cmd} ./{model}"
+    
+    # If it's conjure-oxide, add -o for solution verification
+    if "conjure-oxide" in base_cmd:
+        cmd = f"{runsolver_cfg} {base_cmd} -o {solution_json} ./{model}"
+
     if is_sat:
-        cmd = f"{runsolver_cfg} {runner_commands[runner]} --save-solver-input-file {sat_file} ./{model}"
+        # If it's conjure-oxide and we need SAT closures, we need to handle it carefully
+        if "conjure-oxide" in base_cmd:
+            cmd = f"{runsolver_cfg} {base_cmd} -o {solution_json} --save-solver-input-file {sat_file} ./{model}"
+        else:
+            cmd = f"{runsolver_cfg} {base_cmd} --save-solver-input-file {sat_file} ./{model}"
 
     print("Running:", cmd)
 
@@ -180,13 +192,18 @@ def time_run(
         error_msg: str | None = None
         if result.returncode == 0:
             # check if it actually produced a solution.
-            if not solution_file.exists():
+            found_solution = False
+            if "conjure-oxide" in base_cmd:
+                found_solution = solution_json.exists()
+            else:
+                found_solution = solution_file.exists()
+
+            if not found_solution:
                 print("No solution file found. Recording -1.0")
                 runtime = -1.0
                 error_msg = "No solution file found (likely UNSAT or silent failure)"
             else:
                 print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
-                solution_file.unlink() # Cleanup
         else:
             print("Run failed. Recording -1.0")
             runtime = -1.0
@@ -194,10 +211,12 @@ def time_run(
 
         return runtime, var_count, sat_closures, error_msg
     finally:
-        if is_sat and sat_file.exists():
+        if sat_file.exists():
             sat_file.unlink()
         if solution_file.exists():
             solution_file.unlink()
+        if solution_json.exists():
+            solution_json.unlink()
 
 
 def time_conjure_run(
