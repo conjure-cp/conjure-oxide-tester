@@ -36,16 +36,23 @@ for arg in "$@"; do
     fi
 done
 
-# Detect operand from the end of remaining args
-ARGS=("${NEW_ARGS[@]}")
-LAST_ARG=${ARGS[-1]}
+# Detect runners and operand
+RUNNER_LIST=$(python3 -c "import json; print(' '.join(json.load(open('settings.json'))['runner_commands'].keys()))")
+RUNNERS=()
+OPERAND=""
 
-if [ "${#ARGS[@]}" -ge 2 ]; then
-    OPERAND=$LAST_ARG
-    unset 'ARGS[-1]'
+for arg in "${NEW_ARGS[@]}"; do
+    if [[ " $RUNNER_LIST " =~ " $arg " ]]; then
+        RUNNERS+=("$arg")
+    else
+        OPERAND="$arg"
+    fi
+done
+
+if [ ${#RUNNERS[@]} -eq 0 ]; then
+    echo "Error: No valid runners specified."
+    usage
 fi
-
-RUNNERS=("${ARGS[@]}")
 
 cd "$(dirname "$0")/.." || exit 1
 
@@ -55,6 +62,7 @@ cleanup() {
     find -name "**.MINION*" -delete
     rm -rf conjure-output
     rm -rf temp-models
+    rm -f .temp_files
 }
 
 trap cleanup EXIT INT TERM
@@ -72,7 +80,8 @@ has_operand() {
     if [ -z "$operand" ]; then
         return 0
     fi
-    grep -q "$operand" "$filename"
+    # Check if filename contains operand OR file content contains operand
+    [[ "$filename" == *"$operand"* ]] || grep -q "$operand" "$filename"
 }
 
 DB_PATH=$(python3 -c "import json; print(json.load(open('settings.json'))['outfile'])")
@@ -86,13 +95,18 @@ echo "Runners: ${RUNNERS[*]}"
 [ -n "$COLLECT_CLOSURES_FLAG" ] && echo "Closures: Disabled"
 echo "Run: $NEXT_RUN"
 
-FILES=$(find models -type f -name "*.essence" | while read -r f; do
+find models -type f -name "*.essence" | while read -r f; do
     if has_operand "$OPERAND" "$f"; then
         echo "$f"
     fi
-done)
+done > .temp_files
+
+if [ ! -s .temp_files ]; then
+    echo "No files found matching filter: $OPERAND"
+    exit 0
+fi
 
 parallel --jobs 90% --progress \
     python3 src/timer.py {1} {2} $NEXT_RUN $COLLECT_CLOSURES_FLAG \
     ::: "${RUNNERS[@]}" \
-    ::: $FILES
+    :::: .temp_files

@@ -152,7 +152,7 @@ def time_run(
 
     cmd = f"{runsolver_cfg} {runner_commands[runner]} ./{model}"
     if is_sat:
-        cmd = f"{runner_commands[runner]} --save-solver-input-file {sat_file} ./{model}"
+        cmd = f"{runsolver_cfg} {runner_commands[runner]} --save-solver-input-file {sat_file} ./{model}"
 
     print("Running:", cmd)
 
@@ -274,7 +274,11 @@ if __name__ == "__main__":
         sys.exit(1)
 
     runner = sys.argv[1]
-    model = str(Path(sys.argv[2]))
+    model_path = Path(sys.argv[2])
+    if not model_path.is_file():
+        print(f"Error: Model file '{model_path}' not found.")
+        sys.exit(1)
+    model = str(model_path)
     run_number = int(sys.argv[3])
 
     conn = get_connection()
