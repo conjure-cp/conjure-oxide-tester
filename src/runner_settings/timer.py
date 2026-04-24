@@ -1,47 +1,18 @@
 # timer.py
 
-from pathlib import Path
-import sqlite3
-import sys
-import json
-import time
-import subprocess
-import shutil
 import os
+import shutil
+import sqlite3
+import subprocess
+import sys
+import time
+from pathlib import Path
 
-# ------------------------
-# Load settings
-# ------------------------
-with Path("settings.json").open("r", encoding="utf-8") as f:
-    settings = json.load(f)
+from settings import config
 
-runner_commands = settings["runner_commands"]
-db_path = settings["outfile"]
-
-wall = settings["runsolver_cfg"]["walltime"]
-cpus = settings["runsolver_cfg"]["cpus"]
-mem = settings["runsolver_cfg"]["memory"]
-
-def check_runsolver() -> bool:
-    """Check if runsolver is available and works."""
-    if shutil.which("runsolver") is None:
-        return False
-    try:
-        # Simple test to see if it runs
-        subprocess.run("runsolver --version", shell=True, capture_output=True, check=True)
-        return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return False
-
-HAS_RUNSOLVER = check_runsolver()
-if HAS_RUNSOLVER:
-    runsolver_cfg = f"runsolver -R {mem} -C {cpus} -W {wall}"
-else:
-    print("Warning: 'runsolver' is not installed or broken. Running solvers directly without limits.")
-    runsolver_cfg = ""
 
 def get_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(db_path, timeout=30)
+    conn = sqlite3.connect(config.db_path, timeout=30)
     conn.execute("PRAGMA journal_mode=WAL;")
 
     return conn
@@ -74,7 +45,7 @@ def update_runtime(
             conn.execute(f'ALTER TABLE results ADD COLUMN "{runner}" REAL;')
         except sqlite3.OperationalError:
             pass
-        
+
         try:
             conn.execute(f'ALTER TABLE results ADD COLUMN "{var_col}" INTEGER;')
         except sqlite3.OperationalError:
@@ -123,7 +94,7 @@ def get_dimacs_stats(cnf_file: Path) -> tuple[int, int]:
     gets dimacs file and returns:
         - number of variables
         - number of closures
-    if error we return -1 
+    if error we return -1
     """
     if not cnf_file.exists():
         return -1, -1
@@ -151,11 +122,11 @@ def time_run(
         - number of sat closures (optional, -1 if collect_closures is false)
         - error message
     """
-    if runner not in runner_commands:
+    if runner not in config.runner_commands:
         raise ValueError(f"Unknown runner: {runner}")
 
     is_sat = collect_closures and (
-        "sat" in runner.lower() or "sat" in runner_commands[runner].lower()
+        "sat" in runner.lower() or "sat" in config.runner_commands[runner].lower()
     )
 
     # Generate a unique filename using runner, sanitized model path, and PID
@@ -171,19 +142,19 @@ def time_run(
         solution_file.unlink()
 
     # Build command
-    base_cmd = runner_commands[runner]
-    cmd = f"{runsolver_cfg} {base_cmd} ./{model}"
-    
+    base_cmd = config.runner_commands[runner]
+    cmd = f"{config.runsolver_cmd} {base_cmd} ./{model}"
+
     # If it's conjure-oxide, add -o for solution verification
     if "conjure-oxide" in base_cmd:
-        cmd = f"{runsolver_cfg} {base_cmd} -o {solution_json} ./{model}"
+        cmd = f"{config.runsolver_cmd} {base_cmd} -o {solution_json} ./{model}"
 
     if is_sat:
         # If it's conjure-oxide and we need SAT closures, we need to handle it carefully
         if "conjure-oxide" in base_cmd:
-            cmd = f"{runsolver_cfg} {base_cmd} -o {solution_json} --save-solver-input-file {sat_file} ./{model}"
+            cmd = f"{config.runsolver_cmd} {base_cmd} -o {solution_json} --save-solver-input-file {sat_file} ./{model}"
         else:
-            cmd = f"{runsolver_cfg} {base_cmd} --save-solver-input-file {sat_file} ./{model}"
+            cmd = f"{config.runsolver_cmd} {base_cmd} --save-solver-input-file {sat_file} ./{model}"
 
     print("Running:", cmd)
 
@@ -213,7 +184,9 @@ def time_run(
             found_solution = solution_file.exists() and solution_file.stat().st_size > 0
 
         if result.returncode == 0 and found_solution:
-            print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
+            print(
+                f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}"
+            )
         else:
             print("Run failed (non-zero exit or no solution). Recording -1.0")
             runtime = -1.0
@@ -221,7 +194,7 @@ def time_run(
             error_msg = result.stderr.strip() or result.stdout.strip()
             if not error_msg and not found_solution:
                 error_msg = "No solution found (likely UNSAT or silent failure)"
-            
+
             # Print the error for immediate feedback in logs
             if error_msg:
                 print(f"Error captured: {error_msg[:200]}...")
@@ -247,34 +220,33 @@ def time_conjure_run(
         - time
         - number of sat variabels (optional, -1 if collect_closures is false)
         - number of sat closures (optional, -1 if collect_closures is false)
-        - 
+        -
         - error message
     """
-    if runner not in runner_commands:
+    if runner not in config.runner_commands:
         raise ValueError(f"Unknown runner: {runner}")
 
-    cmd_str = runner_commands[runner]
+    cmd_str = config.runner_commands[runner]
     solver = "minion"
     if "--solver" in cmd_str:
         parts = cmd_str.split()
         try:
             idx = parts.index("--solver")
             solver = parts[idx + 1]
-        except (ValueError, IndexError):
+        except ValueError, IndexError:
             pass
 
     effective_runner = f"{runner}_{solver}" if runner == "conjure" else runner
 
-    
     # create a unique output directory for savile row/conjure.
-    # this prevents file conflicts and race conditions that would occur 
+    # this prevents file conflicts and race conditions that would occur
     # if multiple threads wrote to the same folder simultaneously.
     safe_model = str(Path(model)).replace("/", "_").replace(".", "_")
     unique_id = f"{effective_runner}_{safe_model}_{os.getpid()}"
     out_dir = Path(f"temp-conjure-{unique_id}")
 
     # Conjure solve to get eprime
-    cmd = f"{runsolver_cfg} {cmd_str} -o {out_dir} ./{model}"
+    cmd = f"{config.runsolver_cmd} {cmd_str} -o {out_dir} ./{model}"
     print("Running:", cmd)
 
     var_count = -1
@@ -294,7 +266,7 @@ def time_conjure_run(
         if result.returncode == 0:
             # check if a solution exists in the out_dir and it is not empty.
             solution_files = list(out_dir.glob("*.solution"))
-            
+
             found_solution = any(f.stat().st_size > 0 for f in solution_files)
 
             if not found_solution:
@@ -312,7 +284,9 @@ def time_conjure_run(
                         subprocess.run(sr_cmd, shell=True, capture_output=True)
                         var_count, sat_closures = get_dimacs_stats(sat_file)
 
-                print(f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}")
+                print(
+                    f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}"
+                )
         else:
             print("Run failed. Recording -1.0")
             runtime = -1.0
@@ -344,14 +318,18 @@ if __name__ == "__main__":
 
     conn = get_connection()
     if "conjure" not in runner.lower():
-        runtime, var_count, sat_closures, error_msg = time_run(runner, model, collect_closures)
-        effective_runner = runner
-    else:
-        runtime, var_count, sat_closures, effective_runner, error_msg = time_conjure_run(
+        runtime, var_count, sat_closures, error_msg = time_run(
             runner, model, collect_closures
         )
+        effective_runner = runner
+    else:
+        runtime, var_count, sat_closures, effective_runner, error_msg = (
+            time_conjure_run(runner, model, collect_closures)
+        )
 
-    update_runtime(conn, model, effective_runner, runtime, run_number, var_count, sat_closures)
+    update_runtime(
+        conn, model, effective_runner, runtime, run_number, var_count, sat_closures
+    )
 
     if error_msg:
         update_failure(conn, model, effective_runner, error_msg, run_number)
