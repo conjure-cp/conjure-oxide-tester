@@ -112,21 +112,20 @@ def time_run(runner: str, model: str, collect_closures: bool) -> RunResult:
             # check that it exists and is not empty
             found_solution = solution_file.exists() and solution_file.stat().st_size > 0
 
-        if result.returncode == 0 and found_solution:
-            print(
-                f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}"
-            )
+        if result.returncode == 0:
+            if not found_solution:
+                print(f"Runtime: {runtime:.4f}s. (No solution found; likely UNSAT)")
+            else:
+                print(
+                    f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}"
+                )
         else:
-            print("Run failed (non-zero exit or no solution). Recording -1.0")
+            print("Run failed (non-zero exit). Recording -1.0")
             runtime = -1.0
-            # Prioritize stderr, but if empty, use stdout
-            error_msg = result.stderr.strip() or result.stdout.strip()
-            if not error_msg and not found_solution:
-                error_msg = "No solution found (likely UNSAT or silent failure)"
-
-            # Print the error for immediate feedback in logs
-            if error_msg:
-                print(f"Error captured: {error_msg[:200]}...")
+            error_msg = (
+                result.stderr.strip() or result.stdout.strip() or "Silent failure"
+            )
+            print(f"Error captured: {error_msg[:200]}...")
 
         return RunResult(
             runtime,
@@ -194,31 +193,30 @@ def time_conjure_run(runner: str, model: str, collect_closures: bool) -> RunResu
         error_msg: str | None = None
 
         if result.returncode == 0:
-            # check if a solution exists in the out_dir and it is not empty.
             solution_files = list(out_dir.glob("*.solution"))
-
             found_solution = any(f.stat().st_size > 0 for f in solution_files)
 
             if not found_solution:
-                print("No solution file found in conjure out_dir. Recording -1.0")
-                runtime = -1.0
-                error_msg = "No solution found in output directory"
-            else:
-                if collect_closures and runner == "conjure_sat":
-                    eprime_files = list(out_dir.glob("*.eprime"))
-                    if eprime_files:
-                        eprime_file = eprime_files[0]
-                        sat_file = out_dir / "temp_sat.cnf"
-                        sr_cmd = f"savilerow -sat -out-sat {sat_file} {eprime_file}"
-                        print("Running:", sr_cmd)
-                        subprocess.run(sr_cmd, shell=True, capture_output=True)
-                        var_count, sat_closures = get_dimacs_stats(sat_file)
+                print(
+                    f"Runtime: {runtime:.4f}s. (No solution file found; likely UNSAT)"
+                )
 
+            if collect_closures and runner == "conjure_sat":
+                eprime_files = list(out_dir.glob("*.eprime"))
+                if eprime_files:
+                    eprime_file = eprime_files[0]
+                    sat_file = out_dir / "temp_sat.cnf"
+                    sr_cmd = f"savilerow -sat -out-sat {sat_file} {eprime_file}"
+                    print("Running:", sr_cmd)
+                    subprocess.run(sr_cmd, shell=True, capture_output=True)
+                    var_count, sat_closures = get_dimacs_stats(sat_file)
+
+            if found_solution:
                 print(
                     f"Runtime: {runtime:.4f}s, Sat var number: {var_count} Closures: {sat_closures}"
                 )
         else:
-            print("Run failed. Recording -1.0")
+            print("Run failed (non-zero exit). Recording -1.0")
             runtime = -1.0
             error_msg = result.stderr or result.stdout
 
