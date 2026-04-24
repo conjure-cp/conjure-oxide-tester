@@ -2,91 +2,13 @@
 
 import os
 import shutil
-import sqlite3
 import subprocess
 import sys
 import time
 from pathlib import Path
 
+from database_manager import DatabaseManager
 from settings import config
-
-
-def get_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(config.db_path, timeout=30)
-    conn.execute("PRAGMA journal_mode=WAL;")
-
-    return conn
-
-
-def update_runtime(
-    conn: sqlite3.Connection,
-    model: str,
-    runner: str,
-    runtime: float,
-    run_number: int,
-    var_count: int,
-    sat_closures: int,
-) -> None:
-    conn.execute(
-        """
-        INSERT INTO results (model, run_number)
-        VALUES (?, ?)
-        ON CONFLICT(model, run_number)
-        DO NOTHING
-        """,
-        (model, run_number),
-    )
-
-    closure_col = f"{runner}_closures"
-    var_col = f"{runner}_variables"
-
-    if "sat" in runner.lower() or "conjure" in runner.lower() or sat_closures != -1:
-        try:
-            conn.execute(f'ALTER TABLE results ADD COLUMN "{runner}" REAL;')
-        except sqlite3.OperationalError:
-            pass
-
-        try:
-            conn.execute(f'ALTER TABLE results ADD COLUMN "{var_col}" INTEGER;')
-        except sqlite3.OperationalError:
-            pass
-
-        try:
-            conn.execute(f'ALTER TABLE results ADD COLUMN "{closure_col}" INTEGER;')
-        except sqlite3.OperationalError:
-            pass
-
-        query = f'UPDATE results SET "{runner}" = ?, "{var_col}" = ?, "{closure_col}" = ? WHERE model = ? AND run_number = ?'
-        conn.execute(query, (runtime, var_count, sat_closures, model, run_number))
-
-    else:
-        try:
-            conn.execute(f'ALTER TABLE results ADD COLUMN "{runner}" REAL;')
-        except sqlite3.OperationalError:
-            pass
-        query = f'UPDATE results SET "{runner}" = ? WHERE model = ? AND run_number = ?'
-        conn.execute(query, (runtime, model, run_number))
-
-    conn.commit()
-
-
-def update_failure(
-    conn: sqlite3.Connection,
-    model: str,
-    runner: str,
-    error_msg: str,
-    run_number: int,
-) -> None:
-    conn.execute(
-        """
-        INSERT INTO failures (model, runner, run_number, error_msg)
-        VALUES (?, ?, ?, ?)
-        ON CONFLICT(model, runner, run_number)
-        DO UPDATE SET error_msg = excluded.error_msg
-        """,
-        (model, runner, run_number, error_msg),
-    )
-    conn.commit()
 
 
 def get_dimacs_stats(cnf_file: Path) -> tuple[int, int]:
@@ -316,7 +238,6 @@ if __name__ == "__main__":
     model = str(model_path)
     run_number = int(sys.argv[3])
 
-    conn = get_connection()
     if "conjure" not in runner.lower():
         runtime, var_count, sat_closures, error_msg = time_run(
             runner, model, collect_closures
@@ -327,11 +248,10 @@ if __name__ == "__main__":
             time_conjure_run(runner, model, collect_closures)
         )
 
-    update_runtime(
-        conn, model, effective_runner, runtime, run_number, var_count, sat_closures
+    db = DatabaseManager(config.db_path)
+    db.update_runtime(
+        model, effective_runner, runtime, run_number, var_count, sat_closures
     )
 
     if error_msg:
-        update_failure(conn, model, effective_runner, error_msg, run_number)
-
-    conn.close()
+        db.update_failure(model, effective_runner, error_msg, run_number)

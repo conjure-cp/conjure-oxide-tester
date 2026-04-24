@@ -107,6 +107,6 @@ if [ ! -s .temp_files ]; then
 fi
 
 parallel --jobs 90% --progress \
-    python3 src/timer.py {1} {2} $NEXT_RUN $COLLECT_CLOSURES_FLAG \
+    python3 src/runner_settings/timer.py {1} {2} $NEXT_RUN $COLLECT_CLOSURES_FLAG \
     ::: "${RUNNERS[@]}" \
     :::: .temp_files
