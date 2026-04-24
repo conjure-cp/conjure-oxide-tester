@@ -6,9 +6,18 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from typing import NamedTuple
 
 from database_manager import DatabaseManager
 from settings import config
+
+
+class RunResult(NamedTuple):
+    runtime: float
+    var_count: int
+    sat_closures: int
+    effective_runner: str
+    error_msg: str | None = None
 
 
 def get_dimacs_stats(cnf_file: Path) -> tuple[int, int]:
@@ -32,9 +41,7 @@ def get_dimacs_stats(cnf_file: Path) -> tuple[int, int]:
     return -1, -1
 
 
-def time_run(
-    runner: str, model: str, collect_closures: bool
-) -> tuple[float, int, int, str | None]:
+def time_run(runner: str, model: str, collect_closures: bool) -> RunResult:
     """
     Runs conjure-oxide with runnersolver that is config-ed in settings.json
 
@@ -121,7 +128,13 @@ def time_run(
             if error_msg:
                 print(f"Error captured: {error_msg[:200]}...")
 
-        return runtime, var_count, sat_closures, error_msg
+        return RunResult(
+            runtime,
+            var_count,
+            sat_closures,
+            runner,
+            error_msg,
+        )
     finally:
         if sat_file.exists():
             sat_file.unlink()
@@ -131,9 +144,7 @@ def time_run(
             solution_json.unlink()
 
 
-def time_conjure_run(
-    runner: str, model: str, collect_closures: bool
-) -> tuple[float, int, int, str, str | None]:
+def time_conjure_run(runner: str, model: str, collect_closures: bool) -> RunResult:
     """
     Runs a given model with conjure with runnersolver that is configured
     in settings.json
@@ -152,11 +163,8 @@ def time_conjure_run(
     solver = "minion"
     if "--solver" in cmd_str:
         parts = cmd_str.split()
-        try:
-            idx = parts.index("--solver")
-            solver = parts[idx + 1]
-        except ValueError, IndexError:
-            pass
+        idx = parts.index("--solver")
+        solver = parts[idx + 1]
 
     effective_runner = f"{runner}_{solver}" if runner == "conjure" else runner
 
@@ -214,7 +222,7 @@ def time_conjure_run(
             runtime = -1.0
             error_msg = result.stderr or result.stdout
 
-        return runtime, var_count, sat_closures, effective_runner, error_msg
+        return RunResult(runtime, var_count, sat_closures, effective_runner, error_msg)
     finally:
         if out_dir.exists():
             shutil.rmtree(out_dir)
@@ -239,7 +247,7 @@ if __name__ == "__main__":
     run_number = int(sys.argv[3])
 
     if "conjure" not in runner.lower():
-        runtime, var_count, sat_closures, error_msg = time_run(
+        runtime, var_count, sat_closures, runner, error_msg = time_run(
             runner, model, collect_closures
         )
         effective_runner = runner

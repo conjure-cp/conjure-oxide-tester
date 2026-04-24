@@ -40,7 +40,7 @@ class Settings:
                 "runsolver --version", shell=True, capture_output=True, check=True
             )
             return True
-        except subprocess.CalledProcessError, FileNotFoundError:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             return False
 
     def _build_runsolver_cmd(self) -> str:
