@@ -1,0 +1,303 @@
+predicate all_different_int(array [int] of var int: xs);
+var 1..61: position_0 :: output_var;
+var 1..57: position_1 :: output_var;
+var 1..53: position_2 :: output_var;
+var 1..49: position_3 :: output_var;
+var 1..45: position_4 :: output_var;
+var 1..41: position_5 :: output_var;
+var 1..37: position_6 :: output_var;
+var 1..33: position_7 :: output_var;
+var 1..29: position_8 :: output_var;
+var 1..25: position_9 :: output_var;
+var 1..21: position_10 :: output_var;
+var 1..17: position_11 :: output_var;
+var 1..13: position_12 :: output_var;
+var 1..65: positionaux_0_0;
+var 1..65: positionaux_0_1;
+var 1..65: positionaux_0_2;
+var 1..65: positionaux_0_3;
+var 1..65: positionaux_1_0;
+var 1..65: positionaux_1_1;
+var 1..65: positionaux_1_2;
+var 1..65: positionaux_1_3;
+var 1..65: positionaux_2_0;
+var 1..65: positionaux_2_1;
+var 1..65: positionaux_2_2;
+var 1..65: positionaux_2_3;
+var 1..65: positionaux_3_0;
+var 1..65: positionaux_3_1;
+var 1..65: positionaux_3_2;
+var 1..65: positionaux_3_3;
+var 1..65: positionaux_4_0;
+var 1..65: positionaux_4_1;
+var 1..65: positionaux_4_2;
+var 1..65: positionaux_4_3;
+var 1..65: positionaux_5_0;
+var 1..65: positionaux_5_1;
+var 1..65: positionaux_5_2;
+var 1..65: positionaux_5_3;
+var 1..65: positionaux_6_0;
+var 1..65: positionaux_6_1;
+var 1..65: positionaux_6_2;
+var 1..65: positionaux_6_3;
+var 1..65: positionaux_7_0;
+var 1..65: positionaux_7_1;
+var 1..65: positionaux_7_2;
+var 1..65: positionaux_7_3;
+var 1..65: positionaux_8_0;
+var 1..65: positionaux_8_1;
+var 1..65: positionaux_8_2;
+var 1..65: positionaux_8_3;
+var 1..65: positionaux_9_0;
+var 1..65: positionaux_9_1;
+var 1..65: positionaux_9_2;
+var 1..65: positionaux_9_3;
+var 1..65: positionaux_10_0;
+var 1..65: positionaux_10_1;
+var 1..65: positionaux_10_2;
+var 1..65: positionaux_10_3;
+var 1..65: positionaux_11_0;
+var 1..65: positionaux_11_1;
+var 1..65: positionaux_11_2;
+var 1..65: positionaux_11_3;
+var 1..65: positionaux_12_0;
+var 1..65: positionaux_12_1;
+var 1..65: positionaux_12_2;
+var 1..65: positionaux_12_3;
+constraint all_different_int([
+position_0, 
+position_1, 
+position_2, 
+position_3, 
+position_4, 
+position_5, 
+position_6, 
+position_7, 
+position_8, 
+position_9, 
+position_10, 
+position_11, 
+position_12, 
+positionaux_0_0,
+positionaux_0_1,
+positionaux_0_2,
+positionaux_0_3,
+positionaux_1_0,
+positionaux_1_1,
+positionaux_1_2,
+positionaux_1_3,
+positionaux_2_0,
+positionaux_2_1,
+positionaux_2_2,
+positionaux_2_3,
+positionaux_3_0,
+positionaux_3_1,
+positionaux_3_2,
+positionaux_3_3,
+positionaux_4_0,
+positionaux_4_1,
+positionaux_4_2,
+positionaux_4_3,
+positionaux_5_0,
+positionaux_5_1,
+positionaux_5_2,
+positionaux_5_3,
+positionaux_6_0,
+positionaux_6_1,
+positionaux_6_2,
+positionaux_6_3,
+positionaux_7_0,
+positionaux_7_1,
+positionaux_7_2,
+positionaux_7_3,
+positionaux_8_0,
+positionaux_8_1,
+positionaux_8_2,
+positionaux_8_3,
+positionaux_9_0,
+positionaux_9_1,
+positionaux_9_2,
+positionaux_9_3,
+positionaux_10_0,
+positionaux_10_1,
+positionaux_10_2,
+positionaux_10_3,
+positionaux_11_0,
+positionaux_11_1,
+positionaux_11_2,
+positionaux_11_3,
+positionaux_12_0,
+positionaux_12_1,
+positionaux_12_2,
+positionaux_12_3,
+]);
+constraint int_lin_eq([1,1,-1], [position_0, 1, positionaux_0_0], 0);
+constraint int_lin_eq([1,1,-1], [position_0, 2, positionaux_0_1], 0);
+constraint int_lin_eq([1,1,-1], [position_0, 3, positionaux_0_2], 0);
+constraint int_lin_eq([1,1,-1], [position_0, 4, positionaux_0_3], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 2, positionaux_1_0], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 4, positionaux_1_1], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 6, positionaux_1_2], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 8, positionaux_1_3], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 3, positionaux_2_0], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 6, positionaux_2_1], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 9, positionaux_2_2], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 12, positionaux_2_3], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 4, positionaux_3_0], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 8, positionaux_3_1], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 12, positionaux_3_2], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 16, positionaux_3_3], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 5, positionaux_4_0], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 10, positionaux_4_1], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 15, positionaux_4_2], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 20, positionaux_4_3], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 6, positionaux_5_0], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 12, positionaux_5_1], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 18, positionaux_5_2], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 24, positionaux_5_3], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 7, positionaux_6_0], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 14, positionaux_6_1], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 21, positionaux_6_2], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 28, positionaux_6_3], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 8, positionaux_7_0], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 16, positionaux_7_1], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 24, positionaux_7_2], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 32, positionaux_7_3], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 9, positionaux_8_0], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 18, positionaux_8_1], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 27, positionaux_8_2], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 36, positionaux_8_3], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 10, positionaux_9_0], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 20, positionaux_9_1], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 30, positionaux_9_2], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 40, positionaux_9_3], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 11, positionaux_10_0], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 22, positionaux_10_1], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 33, positionaux_10_2], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 44, positionaux_10_3], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 12, positionaux_11_0], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 24, positionaux_11_1], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 36, positionaux_11_2], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 48, positionaux_11_3], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 13, positionaux_12_0], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 26, positionaux_12_1], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 39, positionaux_12_2], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 52, positionaux_12_3], 0);
+solve :: int_search([
+position_0, 
+position_1, 
+position_2, 
+position_3, 
+position_4, 
+position_5, 
+position_6, 
+position_7, 
+position_8, 
+position_9, 
+position_10, 
+position_11, 
+position_12, 
+positionaux_0_0
+,
+positionaux_0_1
+,
+positionaux_0_2
+,
+positionaux_0_3
+,
+positionaux_1_0
+,
+positionaux_1_1
+,
+positionaux_1_2
+,
+positionaux_1_3
+,
+positionaux_2_0
+,
+positionaux_2_1
+,
+positionaux_2_2
+,
+positionaux_2_3
+,
+positionaux_3_0
+,
+positionaux_3_1
+,
+positionaux_3_2
+,
+positionaux_3_3
+,
+positionaux_4_0
+,
+positionaux_4_1
+,
+positionaux_4_2
+,
+positionaux_4_3
+,
+positionaux_5_0
+,
+positionaux_5_1
+,
+positionaux_5_2
+,
+positionaux_5_3
+,
+positionaux_6_0
+,
+positionaux_6_1
+,
+positionaux_6_2
+,
+positionaux_6_3
+,
+positionaux_7_0
+,
+positionaux_7_1
+,
+positionaux_7_2
+,
+positionaux_7_3
+,
+positionaux_8_0
+,
+positionaux_8_1
+,
+positionaux_8_2
+,
+positionaux_8_3
+,
+positionaux_9_0
+,
+positionaux_9_1
+,
+positionaux_9_2
+,
+positionaux_9_3
+,
+positionaux_10_0
+,
+positionaux_10_1
+,
+positionaux_10_2
+,
+positionaux_10_3
+,
+positionaux_11_0
+,
+positionaux_11_1
+,
+positionaux_11_2
+,
+positionaux_11_3
+,
+positionaux_12_0
+,
+positionaux_12_1
+,
+positionaux_12_2
+,
+positionaux_12_3
+], input_order, indomain_min, complete) satisfy;

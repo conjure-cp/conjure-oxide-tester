@@ -1,0 +1,158 @@
+MINION 3
+# CSETopLevel_number = 0
+# CSETopLevel_eliminated_expressions = 0
+# CSETopLevel_total_size = 0
+# CSE_active_number = 0
+# CSE_active_eliminated_expressions = 0
+# CSE_active_total_size = 0
+**VARIABLES**
+DISCRETE queens_00000 #
+{0..14}
+DISCRETE queens_00001 #
+{0..14}
+DISCRETE queens_00002 #
+{0..14}
+DISCRETE queens_00003 #
+{0..14}
+DISCRETE queens_00004 #
+{0..14}
+DISCRETE queens_00005 #
+{0..14}
+DISCRETE queens_00006 #
+{0..14}
+DISCRETE queens_00007 #
+{0..14}
+DISCRETE queens_00008 #
+{0..14}
+DISCRETE queens_00009 #
+{0..14}
+DISCRETE queens_00010 #
+{0..14}
+DISCRETE queens_00011 #
+{0..14}
+DISCRETE queens_00012 #
+{0..14}
+DISCRETE queens_00013 #
+{0..14}
+DISCRETE queens_00014 #
+{0..14}
+DISCRETE aux0 #(-14 + queens_00014)
+{-14..0}
+DISCRETE aux1 #(-13 + queens_00013)
+{-13..1}
+DISCRETE aux2 #(-12 + queens_00012)
+{-12..2}
+DISCRETE aux3 #(-11 + queens_00011)
+{-11..3}
+DISCRETE aux4 #(-10 + queens_00010)
+{-10..4}
+DISCRETE aux5 #(-9 + queens_00009)
+{-9..5}
+DISCRETE aux6 #(-8 + queens_00008)
+{-8..6}
+DISCRETE aux7 #(-7 + queens_00007)
+{-7..7}
+DISCRETE aux8 #(-6 + queens_00006)
+{-6..8}
+DISCRETE aux9 #(-5 + queens_00005)
+{-5..9}
+DISCRETE aux10 #(-4 + queens_00004)
+{-4..10}
+DISCRETE aux11 #(-3 + queens_00003)
+{-3..11}
+DISCRETE aux12 #(-2 + queens_00002)
+{-2..12}
+DISCRETE aux13 #(-1 + queens_00001)
+{-1..13}
+DISCRETE aux14 #(1 + queens_00001)
+{1..15}
+DISCRETE aux15 #(2 + queens_00002)
+{2..16}
+DISCRETE aux16 #(3 + queens_00003)
+{3..17}
+DISCRETE aux17 #(4 + queens_00004)
+{4..18}
+DISCRETE aux18 #(5 + queens_00005)
+{5..19}
+DISCRETE aux19 #(6 + queens_00006)
+{6..20}
+DISCRETE aux20 #(7 + queens_00007)
+{7..21}
+DISCRETE aux21 #(8 + queens_00008)
+{8..22}
+DISCRETE aux22 #(9 + queens_00009)
+{9..23}
+DISCRETE aux23 #(10 + queens_00010)
+{10..24}
+DISCRETE aux24 #(11 + queens_00011)
+{11..25}
+DISCRETE aux25 #(12 + queens_00012)
+{12..26}
+DISCRETE aux26 #(13 + queens_00013)
+{13..27}
+DISCRETE aux27 #(14 + queens_00014)
+{14..28}
+**SEARCH**
+PRINT[[queens_00000],[queens_00001],[queens_00002],[queens_00003],[queens_00004],[queens_00005],[queens_00006],[queens_00007],[queens_00008],[queens_00009],[queens_00010],[queens_00011],[queens_00012],[queens_00013],[queens_00014]]
+VARORDER STATIC [queens_00000, queens_00001, queens_00002, queens_00003, queens_00004, queens_00005, queens_00006, queens_00007, queens_00008, queens_00009, queens_00010, queens_00011, queens_00012, queens_00013, queens_00014]
+**CONSTRAINTS**
+gacalldiff([queens_00000, queens_00001, queens_00002, queens_00003, queens_00004, queens_00005, queens_00006, queens_00007, queens_00008, queens_00009, queens_00010, queens_00011, queens_00012, queens_00013, queens_00014])
+gacalldiff([queens_00000, aux0, aux1, aux2, aux3, aux4, aux5, aux6, aux7, aux8, aux9, aux10, aux11, aux12, aux13])
+gacalldiff([queens_00000, aux14, aux15, aux16, aux17, aux18, aux19, aux20, aux21, aux22, aux23, aux24, aux25, aux26, aux27])
+sumleq([-14,queens_00014],aux0)
+sumgeq([-14,queens_00014],aux0)
+sumleq([-13,queens_00013],aux1)
+sumgeq([-13,queens_00013],aux1)
+sumleq([-12,queens_00012],aux2)
+sumgeq([-12,queens_00012],aux2)
+sumleq([-11,queens_00011],aux3)
+sumgeq([-11,queens_00011],aux3)
+sumleq([-10,queens_00010],aux4)
+sumgeq([-10,queens_00010],aux4)
+sumleq([-9,queens_00009],aux5)
+sumgeq([-9,queens_00009],aux5)
+sumleq([-8,queens_00008],aux6)
+sumgeq([-8,queens_00008],aux6)
+sumleq([-7,queens_00007],aux7)
+sumgeq([-7,queens_00007],aux7)
+sumleq([-6,queens_00006],aux8)
+sumgeq([-6,queens_00006],aux8)
+sumleq([-5,queens_00005],aux9)
+sumgeq([-5,queens_00005],aux9)
+sumleq([-4,queens_00004],aux10)
+sumgeq([-4,queens_00004],aux10)
+sumleq([-3,queens_00003],aux11)
+sumgeq([-3,queens_00003],aux11)
+sumleq([-2,queens_00002],aux12)
+sumgeq([-2,queens_00002],aux12)
+sumleq([-1,queens_00001],aux13)
+sumgeq([-1,queens_00001],aux13)
+sumleq([1,queens_00001],aux14)
+sumgeq([1,queens_00001],aux14)
+sumleq([2,queens_00002],aux15)
+sumgeq([2,queens_00002],aux15)
+sumleq([3,queens_00003],aux16)
+sumgeq([3,queens_00003],aux16)
+sumleq([4,queens_00004],aux17)
+sumgeq([4,queens_00004],aux17)
+sumleq([5,queens_00005],aux18)
+sumgeq([5,queens_00005],aux18)
+sumleq([6,queens_00006],aux19)
+sumgeq([6,queens_00006],aux19)
+sumleq([7,queens_00007],aux20)
+sumgeq([7,queens_00007],aux20)
+sumleq([8,queens_00008],aux21)
+sumgeq([8,queens_00008],aux21)
+sumleq([9,queens_00009],aux22)
+sumgeq([9,queens_00009],aux22)
+sumleq([10,queens_00010],aux23)
+sumgeq([10,queens_00010],aux23)
+sumleq([11,queens_00011],aux24)
+sumgeq([11,queens_00011],aux24)
+sumleq([12,queens_00012],aux25)
+sumgeq([12,queens_00012],aux25)
+sumleq([13,queens_00013],aux26)
+sumgeq([13,queens_00013],aux26)
+sumleq([14,queens_00014],aux27)
+sumgeq([14,queens_00014],aux27)
+**EOF**

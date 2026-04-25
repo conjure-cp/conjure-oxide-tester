@@ -1,0 +1,15 @@
+language Dominion 1.0
+given n : int
+given k : int
+
+dim position[n] : int
+[find position[i] : int {1..(k*n)-((i+1)*(k-1))} | i in {0..n-1}]
+
+dim positionaux[n,k-1] : int
+find positionaux[..,..] : int{1..(k*n)}
+
+
+such that
+con1 alldiff(flatten([position, flatten(positionaux)]))
+
+[con2 sum([position[i], (i+1)*(j+1)], positionaux[i,j]) | i in {0..n-1}, j in {0..k-2}]
