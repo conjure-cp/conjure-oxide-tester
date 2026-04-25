@@ -253,10 +253,12 @@ if __name__ == "__main__":
     model = str(model_path)
     run_number = int(sys.argv[3])
 
+    # FIXME: now we skip all folders with .param because I'm in a rush to test
+    # SAT that doesn't work on any .param anyways. Later on we should make a refactor
+    # that would run the problem on all the .param files in the folder 
     if check_if_param(model_path.parent):
         print(f"Skipping {model} because a .param file was detected in its folder.")
         db = DatabaseManager(config.db_path)
-        # Record the skip as -2 for runtime
         db.update_runtime(model, runner, -2.0, run_number, -1, -1)
         sys.exit(0)
 
