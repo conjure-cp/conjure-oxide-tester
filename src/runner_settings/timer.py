@@ -83,12 +83,7 @@ def time_run(runner: str, model: str, collect_closures: bool) -> RunResult:
     sat_closures = -1
     start = time.perf_counter()
     try:
-        result = subprocess.run(
-            cmd,
-            shell=True,
-            text=True,
-            capture_output=True,
-        )
+        result = subprocess.run(cmd, shell=True, text=True, capture_output=True)
         runtime = time.perf_counter() - start
 
         if is_sat:
@@ -98,7 +93,11 @@ def time_run(runner: str, model: str, collect_closures: bool) -> RunResult:
         # Always check for solution if the runner was supposed to find one
         found_solution = solution_file.exists() and solution_file.stat().st_size > 0
 
-        if result.returncode == 0:
+        # child status check to record fails on conjure-oxide run
+        child_failed = (
+            "Child status:" in result.stdout and "Child status: 0" not in result.stdout
+        )
+        if result.returncode == 0 and not child_failed:
             if not found_solution:
                 print(f"Runtime: {runtime:.4f}s. (No solution found; likely UNSAT)")
             else:
@@ -180,7 +179,11 @@ def time_conjure_run(runner: str, model: str, collect_closures: bool) -> RunResu
 
         error_msg: str | None = None
 
-        if result.returncode == 0:
+        # check if conjure process gives an error
+        child_failed = (
+            "Child status:" in result.stdout and "Child status: 0" not in result.stdout
+        )
+        if result.returncode == 0 and not child_failed:
             solution_files = list(out_dir.glob("*.solution"))
             found_solution = any(f.stat().st_size > 0 for f in solution_files)
 
