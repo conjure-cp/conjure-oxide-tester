@@ -1,0 +1,9 @@
+language Dominion 0.0
+given n: int {1..}
+dim q1[n] : int
+find q1[..] : int {0..Sum([-1,n])}
+such that
+con1 alldiff([ shift(q1[i],i) | i in {0..Sum([-1,n])}])
+con2 alldiff(flatten(q1))
+con3 alldiff([ shift(q1[i],-i) | i in {0..Sum([-1,n])}])
+
