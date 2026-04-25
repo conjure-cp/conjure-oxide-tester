@@ -51,8 +51,10 @@ def time_run(runner: str, model: str, collect_closures: bool) -> RunResult:
         - number of sat closures (optional, -1 if collect_closures is false)
         - error message
     """
-    if runner not in config.runner_commands:
-        raise ValueError(f"Unknown runner: {runner}")
+    if "conjure-oxide" not in config.runner_commands[runner]:
+        raise ValueError(
+            f"time_run expects a conjure-oxide runner. Command found: {config.runner_commands[runner]}"
+        )
 
     is_sat = collect_closures and (
         "sat" in runner.lower() or "sat" in config.runner_commands[runner].lower()
@@ -64,26 +66,16 @@ def time_run(runner: str, model: str, collect_closures: bool) -> RunResult:
     sat_file = Path(f"temp_{unique_id}.cnf")
     solution_json = Path(f"solution_{unique_id}.json")
 
-    # Ensure no old solution file exists (for conjure-style runners)
     model_path = Path(model)
     solution_file = Path(f"{model_path.stem}.solution")
     if solution_file.exists():
         solution_file.unlink()
 
-    # Build command
-    base_cmd = config.runner_commands[runner]
-    cmd = f"{config.runsolver_cmd} {base_cmd} ./{model}"
-
-    # If it's conjure-oxide, add -o for solution verification
-    if "conjure-oxide" in base_cmd:
-        cmd = f"{config.runsolver_cmd} {base_cmd} -o {solution_json} ./{model}"
+    # build command
+    cmd = f"{config.runsolver_cmd} {config.runner_commands[runner]} ./{model}"
 
     if is_sat:
-        # If it's conjure-oxide and we need SAT closures, we need to handle it carefully
-        if "conjure-oxide" in base_cmd:
-            cmd = f"{config.runsolver_cmd} {base_cmd} -o {solution_json} --save-solver-input-file {sat_file} ./{model}"
-        else:
-            cmd = f"{config.runsolver_cmd} {base_cmd} --save-solver-input-file {sat_file} ./{model}"
+        cmd = f"{config.runsolver_cmd} {config.runner_commands[runner]} -o {solution_json} --save-solver-input-file {sat_file} ./{model}"
 
     print("Running:", cmd)
 
@@ -104,13 +96,7 @@ def time_run(runner: str, model: str, collect_closures: bool) -> RunResult:
 
         error_msg: str | None = None
         # Always check for solution if the runner was supposed to find one
-        found_solution = False
-        if "conjure-oxide" in base_cmd:
-            # check that it's not empty (i.e., not just '[]')
-            found_solution = solution_json.exists() and solution_json.stat().st_size > 2
-        else:
-            # check that it exists and is not empty
-            found_solution = solution_file.exists() and solution_file.stat().st_size > 0
+        found_solution = solution_file.exists() and solution_file.stat().st_size > 0
 
         if result.returncode == 0:
             if not found_solution:
@@ -155,8 +141,10 @@ def time_conjure_run(runner: str, model: str, collect_closures: bool) -> RunResu
         -
         - error message
     """
-    if runner not in config.runner_commands:
-        raise ValueError(f"Unknown runner: {runner}")
+    if "conjure " not in config.runner_commands[runner]:
+        raise ValueError(
+            f"time_run expects a conjure runner. Command found: {config.runner_commands[runner]}"
+        )
 
     cmd_str = config.runner_commands[runner]
     solver = "minion"
@@ -165,7 +153,8 @@ def time_conjure_run(runner: str, model: str, collect_closures: bool) -> RunResu
         idx = parts.index("--solver")
         solver = parts[idx + 1]
 
-    effective_runner = f"{runner}_{solver}" if runner == "conjure" else runner
+    # get solver
+    effective_runner = f"{runner}_{solver}"
 
     # create a unique output directory for savile row/conjure.
     # this prevents file conflicts and race conditions that would occur
@@ -174,7 +163,6 @@ def time_conjure_run(runner: str, model: str, collect_closures: bool) -> RunResu
     unique_id = f"{effective_runner}_{safe_model}_{os.getpid()}"
     out_dir = Path(f"temp-conjure-{unique_id}")
 
-    # Conjure solve to get eprime
     cmd = f"{config.runsolver_cmd} {cmd_str} -o {out_dir} ./{model}"
     print("Running:", cmd)
 
