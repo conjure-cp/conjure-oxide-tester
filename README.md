@@ -6,9 +6,9 @@ This repo uses uv as a project manager. To add new deps just do `uv add <depname
 
 This repo uses `ty` as a type checker. Highly reccomend to [dl ty](https://marketplace.visualstudio.com/items?itemName=astral-sh.ty) to your VScode to get updates on your types in real life
 
-# view and update the db (for commenting)
+# View and update the db
 
-This repo has a custom sql viewer where you can update the table from cli easily. Just run `src/view/view.py` and use it.
+This repo implements sqlite viewer for easy review. Why? Because we needed an easy way of looking up, and commenting in the database entries from the terminal when running tests on dietrich 
 
 ## Setup
 
