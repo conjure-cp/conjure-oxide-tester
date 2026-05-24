@@ -1,0 +1,12 @@
+MINION 3
+
+**VARIABLES**
+DISCRETE i {1..1}
+DISCRETE j {1..1}
+BOOL m[2]
+
+**CONSTRAINTS**
+
+true()
+
+**EOF**

@@ -1,0 +1,92 @@
+predicate all_different_int(array [int] of var int: xs);
+var 1..21: position_0 :: output_var;
+var 1..20: position_1 :: output_var;
+var 1..19: position_2 :: output_var;
+var 1..18: position_3 :: output_var;
+var 1..17: position_4 :: output_var;
+var 1..16: position_5 :: output_var;
+var 1..15: position_6 :: output_var;
+var 1..14: position_7 :: output_var;
+var 1..13: position_8 :: output_var;
+var 1..12: position_9 :: output_var;
+var 1..11: position_10 :: output_var;
+var 1..22: positionaux_0_0;
+var 1..22: positionaux_1_0;
+var 1..22: positionaux_2_0;
+var 1..22: positionaux_3_0;
+var 1..22: positionaux_4_0;
+var 1..22: positionaux_5_0;
+var 1..22: positionaux_6_0;
+var 1..22: positionaux_7_0;
+var 1..22: positionaux_8_0;
+var 1..22: positionaux_9_0;
+var 1..22: positionaux_10_0;
+constraint all_different_int([
+position_0, 
+position_1, 
+position_2, 
+position_3, 
+position_4, 
+position_5, 
+position_6, 
+position_7, 
+position_8, 
+position_9, 
+position_10, 
+positionaux_0_0,
+positionaux_1_0,
+positionaux_2_0,
+positionaux_3_0,
+positionaux_4_0,
+positionaux_5_0,
+positionaux_6_0,
+positionaux_7_0,
+positionaux_8_0,
+positionaux_9_0,
+positionaux_10_0,
+]);
+constraint int_lin_eq([1,1,-1], [position_0, 1, positionaux_0_0], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 2, positionaux_1_0], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 3, positionaux_2_0], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 4, positionaux_3_0], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 5, positionaux_4_0], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 6, positionaux_5_0], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 7, positionaux_6_0], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 8, positionaux_7_0], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 9, positionaux_8_0], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 10, positionaux_9_0], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 11, positionaux_10_0], 0);
+solve :: int_search([
+position_0, 
+position_1, 
+position_2, 
+position_3, 
+position_4, 
+position_5, 
+position_6, 
+position_7, 
+position_8, 
+position_9, 
+position_10, 
+positionaux_0_0
+,
+positionaux_1_0
+,
+positionaux_2_0
+,
+positionaux_3_0
+,
+positionaux_4_0
+,
+positionaux_5_0
+,
+positionaux_6_0
+,
+positionaux_7_0
+,
+positionaux_8_0
+,
+positionaux_9_0
+,
+positionaux_10_0
+], input_order, indomain_min, complete) satisfy;
