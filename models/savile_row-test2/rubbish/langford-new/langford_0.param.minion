@@ -1,0 +1,47 @@
+MINION 3
+**VARIABLES**
+DISCRETE position_0 {1..19}
+DISCRETE position_1 {1..18}
+DISCRETE position_2 {1..17}
+DISCRETE position_3 {1..16}
+DISCRETE position_4 {1..15}
+DISCRETE position_5 {1..14}
+DISCRETE position_6 {1..13}
+DISCRETE position_7 {1..12}
+DISCRETE position_8 {1..11}
+DISCRETE position_9 {1..10}
+DISCRETE positionaux[10,1] {1..20}
+**CONSTRAINTS**
+gacalldiff([
+position_0, 
+position_1, 
+position_2, 
+position_3, 
+position_4, 
+position_5, 
+position_6, 
+position_7, 
+position_8, 
+position_9, 
+ positionaux])
+sumleq([position_0, 1], positionaux[0,0])
+sumgeq([position_0, 1], positionaux[0,0])
+sumleq([position_1, 2], positionaux[1,0])
+sumgeq([position_1, 2], positionaux[1,0])
+sumleq([position_2, 3], positionaux[2,0])
+sumgeq([position_2, 3], positionaux[2,0])
+sumleq([position_3, 4], positionaux[3,0])
+sumgeq([position_3, 4], positionaux[3,0])
+sumleq([position_4, 5], positionaux[4,0])
+sumgeq([position_4, 5], positionaux[4,0])
+sumleq([position_5, 6], positionaux[5,0])
+sumgeq([position_5, 6], positionaux[5,0])
+sumleq([position_6, 7], positionaux[6,0])
+sumgeq([position_6, 7], positionaux[6,0])
+sumleq([position_7, 8], positionaux[7,0])
+sumgeq([position_7, 8], positionaux[7,0])
+sumleq([position_8, 9], positionaux[8,0])
+sumgeq([position_8, 9], positionaux[8,0])
+sumleq([position_9, 10], positionaux[9,0])
+sumgeq([position_9, 10], positionaux[9,0])
+**EOF**

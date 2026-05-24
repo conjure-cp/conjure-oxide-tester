@@ -1,0 +1,574 @@
+predicate all_different_int(array [int] of var int: xs);
+var 1..113: position_0 :: output_var;
+var 1..106: position_1 :: output_var;
+var 1..99: position_2 :: output_var;
+var 1..92: position_3 :: output_var;
+var 1..85: position_4 :: output_var;
+var 1..78: position_5 :: output_var;
+var 1..71: position_6 :: output_var;
+var 1..64: position_7 :: output_var;
+var 1..57: position_8 :: output_var;
+var 1..50: position_9 :: output_var;
+var 1..43: position_10 :: output_var;
+var 1..36: position_11 :: output_var;
+var 1..29: position_12 :: output_var;
+var 1..22: position_13 :: output_var;
+var 1..15: position_14 :: output_var;
+var 1..120: positionaux_0_0;
+var 1..120: positionaux_0_1;
+var 1..120: positionaux_0_2;
+var 1..120: positionaux_0_3;
+var 1..120: positionaux_0_4;
+var 1..120: positionaux_0_5;
+var 1..120: positionaux_0_6;
+var 1..120: positionaux_1_0;
+var 1..120: positionaux_1_1;
+var 1..120: positionaux_1_2;
+var 1..120: positionaux_1_3;
+var 1..120: positionaux_1_4;
+var 1..120: positionaux_1_5;
+var 1..120: positionaux_1_6;
+var 1..120: positionaux_2_0;
+var 1..120: positionaux_2_1;
+var 1..120: positionaux_2_2;
+var 1..120: positionaux_2_3;
+var 1..120: positionaux_2_4;
+var 1..120: positionaux_2_5;
+var 1..120: positionaux_2_6;
+var 1..120: positionaux_3_0;
+var 1..120: positionaux_3_1;
+var 1..120: positionaux_3_2;
+var 1..120: positionaux_3_3;
+var 1..120: positionaux_3_4;
+var 1..120: positionaux_3_5;
+var 1..120: positionaux_3_6;
+var 1..120: positionaux_4_0;
+var 1..120: positionaux_4_1;
+var 1..120: positionaux_4_2;
+var 1..120: positionaux_4_3;
+var 1..120: positionaux_4_4;
+var 1..120: positionaux_4_5;
+var 1..120: positionaux_4_6;
+var 1..120: positionaux_5_0;
+var 1..120: positionaux_5_1;
+var 1..120: positionaux_5_2;
+var 1..120: positionaux_5_3;
+var 1..120: positionaux_5_4;
+var 1..120: positionaux_5_5;
+var 1..120: positionaux_5_6;
+var 1..120: positionaux_6_0;
+var 1..120: positionaux_6_1;
+var 1..120: positionaux_6_2;
+var 1..120: positionaux_6_3;
+var 1..120: positionaux_6_4;
+var 1..120: positionaux_6_5;
+var 1..120: positionaux_6_6;
+var 1..120: positionaux_7_0;
+var 1..120: positionaux_7_1;
+var 1..120: positionaux_7_2;
+var 1..120: positionaux_7_3;
+var 1..120: positionaux_7_4;
+var 1..120: positionaux_7_5;
+var 1..120: positionaux_7_6;
+var 1..120: positionaux_8_0;
+var 1..120: positionaux_8_1;
+var 1..120: positionaux_8_2;
+var 1..120: positionaux_8_3;
+var 1..120: positionaux_8_4;
+var 1..120: positionaux_8_5;
+var 1..120: positionaux_8_6;
+var 1..120: positionaux_9_0;
+var 1..120: positionaux_9_1;
+var 1..120: positionaux_9_2;
+var 1..120: positionaux_9_3;
+var 1..120: positionaux_9_4;
+var 1..120: positionaux_9_5;
+var 1..120: positionaux_9_6;
+var 1..120: positionaux_10_0;
+var 1..120: positionaux_10_1;
+var 1..120: positionaux_10_2;
+var 1..120: positionaux_10_3;
+var 1..120: positionaux_10_4;
+var 1..120: positionaux_10_5;
+var 1..120: positionaux_10_6;
+var 1..120: positionaux_11_0;
+var 1..120: positionaux_11_1;
+var 1..120: positionaux_11_2;
+var 1..120: positionaux_11_3;
+var 1..120: positionaux_11_4;
+var 1..120: positionaux_11_5;
+var 1..120: positionaux_11_6;
+var 1..120: positionaux_12_0;
+var 1..120: positionaux_12_1;
+var 1..120: positionaux_12_2;
+var 1..120: positionaux_12_3;
+var 1..120: positionaux_12_4;
+var 1..120: positionaux_12_5;
+var 1..120: positionaux_12_6;
+var 1..120: positionaux_13_0;
+var 1..120: positionaux_13_1;
+var 1..120: positionaux_13_2;
+var 1..120: positionaux_13_3;
+var 1..120: positionaux_13_4;
+var 1..120: positionaux_13_5;
+var 1..120: positionaux_13_6;
+var 1..120: positionaux_14_0;
+var 1..120: positionaux_14_1;
+var 1..120: positionaux_14_2;
+var 1..120: positionaux_14_3;
+var 1..120: positionaux_14_4;
+var 1..120: positionaux_14_5;
+var 1..120: positionaux_14_6;
+constraint all_different_int([
+position_0, 
+position_1, 
+position_2, 
+position_3, 
+position_4, 
+position_5, 
+position_6, 
+position_7, 
+position_8, 
+position_9, 
+position_10, 
+position_11, 
+position_12, 
+position_13, 
+position_14, 
+positionaux_0_0,
+positionaux_0_1,
+positionaux_0_2,
+positionaux_0_3,
+positionaux_0_4,
+positionaux_0_5,
+positionaux_0_6,
+positionaux_1_0,
+positionaux_1_1,
+positionaux_1_2,
+positionaux_1_3,
+positionaux_1_4,
+positionaux_1_5,
+positionaux_1_6,
+positionaux_2_0,
+positionaux_2_1,
+positionaux_2_2,
+positionaux_2_3,
+positionaux_2_4,
+positionaux_2_5,
+positionaux_2_6,
+positionaux_3_0,
+positionaux_3_1,
+positionaux_3_2,
+positionaux_3_3,
+positionaux_3_4,
+positionaux_3_5,
+positionaux_3_6,
+positionaux_4_0,
+positionaux_4_1,
+positionaux_4_2,
+positionaux_4_3,
+positionaux_4_4,
+positionaux_4_5,
+positionaux_4_6,
+positionaux_5_0,
+positionaux_5_1,
+positionaux_5_2,
+positionaux_5_3,
+positionaux_5_4,
+positionaux_5_5,
+positionaux_5_6,
+positionaux_6_0,
+positionaux_6_1,
+positionaux_6_2,
+positionaux_6_3,
+positionaux_6_4,
+positionaux_6_5,
+positionaux_6_6,
+positionaux_7_0,
+positionaux_7_1,
+positionaux_7_2,
+positionaux_7_3,
+positionaux_7_4,
+positionaux_7_5,
+positionaux_7_6,
+positionaux_8_0,
+positionaux_8_1,
+positionaux_8_2,
+positionaux_8_3,
+positionaux_8_4,
+positionaux_8_5,
+positionaux_8_6,
+positionaux_9_0,
+positionaux_9_1,
+positionaux_9_2,
+positionaux_9_3,
+positionaux_9_4,
+positionaux_9_5,
+positionaux_9_6,
+positionaux_10_0,
+positionaux_10_1,
+positionaux_10_2,
+positionaux_10_3,
+positionaux_10_4,
+positionaux_10_5,
+positionaux_10_6,
+positionaux_11_0,
+positionaux_11_1,
+positionaux_11_2,
+positionaux_11_3,
+positionaux_11_4,
+positionaux_11_5,
+positionaux_11_6,
+positionaux_12_0,
+positionaux_12_1,
+positionaux_12_2,
+positionaux_12_3,
+positionaux_12_4,
+positionaux_12_5,
+positionaux_12_6,
+positionaux_13_0,
+positionaux_13_1,
+positionaux_13_2,
+positionaux_13_3,
+positionaux_13_4,
+positionaux_13_5,
+positionaux_13_6,
+positionaux_14_0,
+positionaux_14_1,
+positionaux_14_2,
+positionaux_14_3,
+positionaux_14_4,
+positionaux_14_5,
+positionaux_14_6,
+]);
+constraint int_lin_eq([1,1,-1], [position_0, 1, positionaux_0_0], 0);
+constraint int_lin_eq([1,1,-1], [position_0, 2, positionaux_0_1], 0);
+constraint int_lin_eq([1,1,-1], [position_0, 3, positionaux_0_2], 0);
+constraint int_lin_eq([1,1,-1], [position_0, 4, positionaux_0_3], 0);
+constraint int_lin_eq([1,1,-1], [position_0, 5, positionaux_0_4], 0);
+constraint int_lin_eq([1,1,-1], [position_0, 6, positionaux_0_5], 0);
+constraint int_lin_eq([1,1,-1], [position_0, 7, positionaux_0_6], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 2, positionaux_1_0], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 4, positionaux_1_1], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 6, positionaux_1_2], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 8, positionaux_1_3], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 10, positionaux_1_4], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 12, positionaux_1_5], 0);
+constraint int_lin_eq([1,1,-1], [position_1, 14, positionaux_1_6], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 3, positionaux_2_0], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 6, positionaux_2_1], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 9, positionaux_2_2], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 12, positionaux_2_3], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 15, positionaux_2_4], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 18, positionaux_2_5], 0);
+constraint int_lin_eq([1,1,-1], [position_2, 21, positionaux_2_6], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 4, positionaux_3_0], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 8, positionaux_3_1], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 12, positionaux_3_2], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 16, positionaux_3_3], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 20, positionaux_3_4], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 24, positionaux_3_5], 0);
+constraint int_lin_eq([1,1,-1], [position_3, 28, positionaux_3_6], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 5, positionaux_4_0], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 10, positionaux_4_1], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 15, positionaux_4_2], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 20, positionaux_4_3], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 25, positionaux_4_4], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 30, positionaux_4_5], 0);
+constraint int_lin_eq([1,1,-1], [position_4, 35, positionaux_4_6], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 6, positionaux_5_0], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 12, positionaux_5_1], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 18, positionaux_5_2], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 24, positionaux_5_3], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 30, positionaux_5_4], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 36, positionaux_5_5], 0);
+constraint int_lin_eq([1,1,-1], [position_5, 42, positionaux_5_6], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 7, positionaux_6_0], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 14, positionaux_6_1], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 21, positionaux_6_2], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 28, positionaux_6_3], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 35, positionaux_6_4], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 42, positionaux_6_5], 0);
+constraint int_lin_eq([1,1,-1], [position_6, 49, positionaux_6_6], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 8, positionaux_7_0], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 16, positionaux_7_1], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 24, positionaux_7_2], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 32, positionaux_7_3], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 40, positionaux_7_4], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 48, positionaux_7_5], 0);
+constraint int_lin_eq([1,1,-1], [position_7, 56, positionaux_7_6], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 9, positionaux_8_0], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 18, positionaux_8_1], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 27, positionaux_8_2], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 36, positionaux_8_3], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 45, positionaux_8_4], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 54, positionaux_8_5], 0);
+constraint int_lin_eq([1,1,-1], [position_8, 63, positionaux_8_6], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 10, positionaux_9_0], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 20, positionaux_9_1], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 30, positionaux_9_2], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 40, positionaux_9_3], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 50, positionaux_9_4], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 60, positionaux_9_5], 0);
+constraint int_lin_eq([1,1,-1], [position_9, 70, positionaux_9_6], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 11, positionaux_10_0], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 22, positionaux_10_1], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 33, positionaux_10_2], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 44, positionaux_10_3], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 55, positionaux_10_4], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 66, positionaux_10_5], 0);
+constraint int_lin_eq([1,1,-1], [position_10, 77, positionaux_10_6], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 12, positionaux_11_0], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 24, positionaux_11_1], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 36, positionaux_11_2], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 48, positionaux_11_3], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 60, positionaux_11_4], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 72, positionaux_11_5], 0);
+constraint int_lin_eq([1,1,-1], [position_11, 84, positionaux_11_6], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 13, positionaux_12_0], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 26, positionaux_12_1], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 39, positionaux_12_2], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 52, positionaux_12_3], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 65, positionaux_12_4], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 78, positionaux_12_5], 0);
+constraint int_lin_eq([1,1,-1], [position_12, 91, positionaux_12_6], 0);
+constraint int_lin_eq([1,1,-1], [position_13, 14, positionaux_13_0], 0);
+constraint int_lin_eq([1,1,-1], [position_13, 28, positionaux_13_1], 0);
+constraint int_lin_eq([1,1,-1], [position_13, 42, positionaux_13_2], 0);
+constraint int_lin_eq([1,1,-1], [position_13, 56, positionaux_13_3], 0);
+constraint int_lin_eq([1,1,-1], [position_13, 70, positionaux_13_4], 0);
+constraint int_lin_eq([1,1,-1], [position_13, 84, positionaux_13_5], 0);
+constraint int_lin_eq([1,1,-1], [position_13, 98, positionaux_13_6], 0);
+constraint int_lin_eq([1,1,-1], [position_14, 15, positionaux_14_0], 0);
+constraint int_lin_eq([1,1,-1], [position_14, 30, positionaux_14_1], 0);
+constraint int_lin_eq([1,1,-1], [position_14, 45, positionaux_14_2], 0);
+constraint int_lin_eq([1,1,-1], [position_14, 60, positionaux_14_3], 0);
+constraint int_lin_eq([1,1,-1], [position_14, 75, positionaux_14_4], 0);
+constraint int_lin_eq([1,1,-1], [position_14, 90, positionaux_14_5], 0);
+constraint int_lin_eq([1,1,-1], [position_14, 105, positionaux_14_6], 0);
+solve :: int_search([
+position_0, 
+position_1, 
+position_2, 
+position_3, 
+position_4, 
+position_5, 
+position_6, 
+position_7, 
+position_8, 
+position_9, 
+position_10, 
+position_11, 
+position_12, 
+position_13, 
+position_14, 
+positionaux_0_0
+,
+positionaux_0_1
+,
+positionaux_0_2
+,
+positionaux_0_3
+,
+positionaux_0_4
+,
+positionaux_0_5
+,
+positionaux_0_6
+,
+positionaux_1_0
+,
+positionaux_1_1
+,
+positionaux_1_2
+,
+positionaux_1_3
+,
+positionaux_1_4
+,
+positionaux_1_5
+,
+positionaux_1_6
+,
+positionaux_2_0
+,
+positionaux_2_1
+,
+positionaux_2_2
+,
+positionaux_2_3
+,
+positionaux_2_4
+,
+positionaux_2_5
+,
+positionaux_2_6
+,
+positionaux_3_0
+,
+positionaux_3_1
+,
+positionaux_3_2
+,
+positionaux_3_3
+,
+positionaux_3_4
+,
+positionaux_3_5
+,
+positionaux_3_6
+,
+positionaux_4_0
+,
+positionaux_4_1
+,
+positionaux_4_2
+,
+positionaux_4_3
+,
+positionaux_4_4
+,
+positionaux_4_5
+,
+positionaux_4_6
+,
+positionaux_5_0
+,
+positionaux_5_1
+,
+positionaux_5_2
+,
+positionaux_5_3
+,
+positionaux_5_4
+,
+positionaux_5_5
+,
+positionaux_5_6
+,
+positionaux_6_0
+,
+positionaux_6_1
+,
+positionaux_6_2
+,
+positionaux_6_3
+,
+positionaux_6_4
+,
+positionaux_6_5
+,
+positionaux_6_6
+,
+positionaux_7_0
+,
+positionaux_7_1
+,
+positionaux_7_2
+,
+positionaux_7_3
+,
+positionaux_7_4
+,
+positionaux_7_5
+,
+positionaux_7_6
+,
+positionaux_8_0
+,
+positionaux_8_1
+,
+positionaux_8_2
+,
+positionaux_8_3
+,
+positionaux_8_4
+,
+positionaux_8_5
+,
+positionaux_8_6
+,
+positionaux_9_0
+,
+positionaux_9_1
+,
+positionaux_9_2
+,
+positionaux_9_3
+,
+positionaux_9_4
+,
+positionaux_9_5
+,
+positionaux_9_6
+,
+positionaux_10_0
+,
+positionaux_10_1
+,
+positionaux_10_2
+,
+positionaux_10_3
+,
+positionaux_10_4
+,
+positionaux_10_5
+,
+positionaux_10_6
+,
+positionaux_11_0
+,
+positionaux_11_1
+,
+positionaux_11_2
+,
+positionaux_11_3
+,
+positionaux_11_4
+,
+positionaux_11_5
+,
+positionaux_11_6
+,
+positionaux_12_0
+,
+positionaux_12_1
+,
+positionaux_12_2
+,
+positionaux_12_3
+,
+positionaux_12_4
+,
+positionaux_12_5
+,
+positionaux_12_6
+,
+positionaux_13_0
+,
+positionaux_13_1
+,
+positionaux_13_2
+,
+positionaux_13_3
+,
+positionaux_13_4
+,
+positionaux_13_5
+,
+positionaux_13_6
+,
+positionaux_14_0
+,
+positionaux_14_1
+,
+positionaux_14_2
+,
+positionaux_14_3
+,
+positionaux_14_4
+,
+positionaux_14_5
+,
+positionaux_14_6
+], input_order, indomain_min, complete) satisfy;

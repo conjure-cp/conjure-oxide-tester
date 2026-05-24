@@ -1,0 +1,17 @@
+$ Langford's number problem (CSP lib problem 24)
+$
+$ Arrange 2 sets of positive integers 1..k to a sequence,
+$ such that, following the first occurence of an integer i, 
+$ each subsequent occurrence of i, appears i+1 indices later
+$ than the last. 
+$ For example, for k=4, a solution would be 41312432
+
+language ESSENCE' 1.0
+given k : int
+letting positionDomain be domain int(1..2*k)
+find position : matrix indexed by [positionDomain] of positionDomain
+
+such that 
+        forall i : int(1..k) .
+            position[i+k] = position[i] + i+1,
+        alldifferent(position)

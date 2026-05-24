@@ -1,0 +1,77 @@
+Test instance Overview
+======================
+
+
+This file gives an overview of all test instances for the automated
+testing system. Test instances are grouped in test types.
+
+All tests are done using common subexpression elimination
+
+
+
+Sample Problems (from /examples directory)
+---------------------------------------------------------------------------
+bibd.eprime			Balanced Incomplete Block Design
+				parameter files: 2
+farm_puzzle.eprime		Farm Puzzle 
+grocery.eprime			Grocery Puzzle 
+langford.eprime			Langford's Number Problem (n=2)
+				parameter files: 2
+n_queens1.eprime		N-Queens Problem, advanced model
+				parameter files: 1
+n_queens2.eprime		N-Queens Problem, standard model
+				parameter files: 1
+peaceableArmyOfQueens1.eprime   Peaceable Army of Queens Problem, model1
+				parameter files: 1
+peaceableArmyOfQueens2.eprime   Peaceable Army of Queens Problem, model2
+				parameter files: 1
+peaceableArmyOfQueens3.eprime   Peaceable Army of Queens Problem, model3
+				parameter files: 1
+quasiGroup3Idempotent.eprime	Quasigroup Existence Problem, Axiom3, idempotent
+				parameter files: 1
+quasiGroup3NonIdempotent.eprime	Quasigroup Existence Problem, Axiom3,not idempotent
+				parameter files: 1
+quasiGroup4Idempotent.eprime	Quasigroup Existence Problem, Axiom4, idempotent
+				parameter files: 1
+quasiGroup4NonIdempotent.eprime	Quasigroup Existence Problem, Axiom4,not idempotent
+				parameter files: 1
+quasiGroup5Idempotent.eprime	Quasigroup Existence Problem, Axiom5, idempotent
+				parameter files: 1
+quasiGroup5NonIdempotent.eprime	Quasigroup Existence Problem, Axiom5,not idempotent
+				parameter files: 1
+quasiGroup6.eprime		Quasigroup Existences Problem, Axiom6
+				parameter files: 1
+quasiGroup7.eprime		Quasigroup Existences Problem, Axiom7
+				parameter files: 1
+sendMoreMoney.eprime		Send More Money Problem  
+sokoban.eprime			Sokoban Problem, 
+				parameter files: 2
+solitaire_battleship.eprime	Solitaire Battleship Problem
+				parameter files: 1
+sonet_problem.eprime		SONET Problem
+				parameter files: 1
+
+
+
+Flattening Tests
+---------------------------------------------------------------------------
+add.eprime			flattening of sums: a + b = c + d
+and.eprime			flattening of   /\: a /\ b = c /\ d
+if.eprime			flattening of   =>: a => b = c => d
+iff.eprime			flattening of  <=>: a <=> b = c <=> d
+or.eprime			flattening of   \/: a \/ b = c \/ d
+
+
+
+
+
+
+Semantic Tests
+---------------------------------------------------------------------------
+revForallRange.eprime		tests if a universal quantification over 
+				and empty range, such as int(10..1)
+				produces a valid outcome (ie.true)
+revExistsRange.eprime		tests if a existential quantification over 
+				and empty range, such as int(10..1)
+				produces a valid outcome (ie.false)
+				

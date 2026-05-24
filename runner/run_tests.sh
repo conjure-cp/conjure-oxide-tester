@@ -95,7 +95,7 @@ echo "Runners: ${RUNNERS[*]}"
 [ -n "$COLLECT_CLOSURES_FLAG" ] && echo "Closures: Disabled"
 echo "Run: $NEXT_RUN"
 
-find models -type f -name "*.essence" | while read -r f; do
+find models -type f -name "*.essence" -o -name "*.eprime" | while read -r f; do
     if has_operand "$OPERAND" "$f"; then
         echo "$f"
     fi
@@ -107,6 +107,6 @@ if [ ! -s .temp_files ]; then
 fi
 
 parallel --jobs 90% --progress \
-    python3 src/runner_settings/timer.py {1} {2} $NEXT_RUN $COLLECT_CLOSURES_FLAG \
+    python3 src/runner_settings/benchmark_runner.py {1} {2} $NEXT_RUN $COLLECT_CLOSURES_FLAG \
     ::: "${RUNNERS[@]}" \
     :::: .temp_files

@@ -1,4 +1,4 @@
-# timer.py
+# benchmark_runner.py
 
 import os
 import shutil
@@ -39,6 +39,22 @@ def get_dimacs_stats(cnf_file: Path) -> tuple[int, int]:
     except Exception:
         pass
     return -1, -1
+
+
+def check_if_param(folder: Path) -> bool:
+    """
+    Checks if a folder contains at least one .essence or .eprime file,
+    AND at least one .param file.
+    """
+    if not folder.is_dir():
+        return False
+
+    extensions = {f.suffix for f in folder.iterdir() if f.is_file()}
+
+    has_model = ".essence" in extensions or ".eprime" in extensions
+    has_param = ".param" in extensions
+
+    return has_model and has_param
 
 
 def time_run(runner: str, model: str, collect_closures: bool) -> RunResult:
@@ -137,9 +153,10 @@ def time_conjure_run(runner: str, model: str, collect_closures: bool) -> RunResu
         - time
         - number of sat variabels (optional, -1 if collect_closures is false)
         - number of sat closures (optional, -1 if collect_closures is false)
-        -
+        - effective_runner
         - error message
     """
+
     if "conjure " not in config.runner_commands[runner]:
         raise ValueError(
             f"time_run expects a conjure runner. Command found: {config.runner_commands[runner]}"
@@ -232,8 +249,18 @@ if __name__ == "__main__":
     if not model_path.is_file():
         print(f"Error: Model file '{model_path}' not found.")
         sys.exit(1)
+
     model = str(model_path)
     run_number = int(sys.argv[3])
+
+    # FIXME: now we skip all folders with .param because I'm in a rush to test
+    # SAT that doesn't work on any .param anyways. Later on we should make a refactor
+    # that would run the problem on all the .param files in the folder 
+    if check_if_param(model_path.parent):
+        print(f"Skipping {model} because a .param file was detected in its folder.")
+        db = DatabaseManager(config.db_path)
+        db.update_runtime(model, runner, -2.0, run_number, -1, -1)
+        sys.exit(0)
 
     if "conjure" not in runner.lower():
         runtime, var_count, sat_closures, runner, error_msg = time_run(
